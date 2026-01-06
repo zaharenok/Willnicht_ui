@@ -66,9 +66,14 @@
                 </div>
 
                 <div id="userMenu" hidden>
-                    <button class="btn btn-ghost" id="logoutBtn">
+                    <div class="user-info">
                         <span id="userEmailDisplay">user@example.com</span>
-                        <svg class="btn-icon" role="img" aria-label="Выйти" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <span id="evaluationsCount" class="evaluations-count" title="Использовано оценок за текущий месяц">
+                            <span id="evaluationsUsed">0</span>/<span id="evaluationsLimit">3</span>
+                        </span>
+                    </div>
+                    <button class="btn btn-ghost btn-logout" id="logoutBtn" aria-label="Выйти">
+                        <svg class="btn-icon" role="img" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <title>Выйти</title>
                             <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
                             <polyline points="16 17 21 12 16 7" />
@@ -79,26 +84,6 @@
             </div>
         </div>
     </header>
-
-    <!-- Login Section -->
-    <section class="login-section" id="loginSection">
-        <div class="container">
-            <div class="login-card">
-                <h2 class="login-title" data-i18n="login_title">Вход</h2>
-                <p class="login-subtitle" data-i18n="login_subtitle">Введите email для доступа к сервису</p>
-
-                <form class="login-form" id="loginForm">
-                    <div class="form-group">
-                        <label class="form-label" for="email">Email</label>
-                        <input type="email" id="email" class="form-input" placeholder="name@example.com" required autocomplete="email" aria-label="Email адрес">
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-full btn-large">
-                        <span data-i18n="btn_enter">Войти</span>
-                    </button>
-                </form>
-            </div>
-        </div>
-    </section>
 
     <!-- App Wrapper (Upload + Results) -->
     <div class="app-wrapper" id="appWrapper">
@@ -129,21 +114,13 @@
                         <div class="upload-preview" id="uploadPreview"></div>
                     </div>
 
-                    <div class="form-group" style="margin-top: 20px;">
-                        <label class="form-label" for="additionalText" data-i18n="label_additional_text">Дополнительная информация</label>
-                        <textarea id="additionalText" class="form-textarea" rows="3" data-i18n-placeholder="placeholder_additional_text" placeholder="Бренд, размеры, состояние, дефекты..." aria-describedby="additionalTextHint"></textarea>
-                        <small id="additionalTextHint" class="form-hint" style="display: block; margin-top: 4px; font-size: 0.75rem; color: var(--color-text-muted);">
-                            Укажите детали для точной AI оценки (бренд, размеры, состояние)
-                        </small>
-                    </div>
-
-                    <button class="btn btn-primary btn-large btn-analyze" id="analyzeBtn" aria-live="polite" disabled>
+                    <button class="btn btn-primary btn-large btn-analyze" id="analyzeBtn" aria-live="polite" disabled style="margin-top: var(--spacing-lg);">
                         <span class="btn-text" data-i18n="btn_analyze">Получить оценку</span>
                         <span class="btn-loader"></span>
                     </button>
                 </div>
 
-                <!-- Right Column: Settings + Latest Result -->
+                <!-- Right Column: Settings + Additional Info -->
                 <div class="app-column-right">
                     <div class="settings-panel">
                         <h3 class="panel-title" data-i18n="settings_title">Настройки</h3>
@@ -166,6 +143,16 @@
                                     <option value="Russian">Русский</option>
                                 </select>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="additional-info-panel">
+                        <h3 class="panel-title" data-i18n="label_additional_text">Дополнительная информация</h3>
+                        <div class="form-group" style="flex: 1; display: flex; flex-direction: column;">
+                            <textarea id="additionalText" class="form-textarea" style="flex: 1;" data-i18n-placeholder="placeholder_additional_text" placeholder="Бренд, размеры, состояние, дефекты..." aria-describedby="additionalTextHint"></textarea>
+                            <small id="additionalTextHint" class="form-hint" style="margin-top: var(--spacing-sm);">
+                                Укажите детали для точной AI оценки (бренд, размеры, состояние)
+                            </small>
                         </div>
                     </div>
 
@@ -215,7 +202,10 @@
     </main>
     </div>
 
+    <!-- Supabase Client Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="i18n.js"></script>
+    <script src="supabase/client.js"></script>
     <script src="app.js"></script>
 </body>
 

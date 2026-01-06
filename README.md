@@ -2,6 +2,21 @@
 
 **Willnicht** is a SaaS platform that helps expats and foreigners sell products on local marketplaces (willhaben.at, eBay Kleinanzeigen, etc.) by overcoming language barriers through AI-powered product evaluation.
 
+## 🗄️ Supabase Integration
+
+This application now supports **Supabase** for secure user authentication and cloud data storage. Users can sign up with email/password, and their product evaluations are securely stored with Row Level Security (RLS) ensuring data isolation between users.
+
+**Key Features:**
+- ✅ Secure email/password authentication with session management
+- ✅ User registration with email confirmation
+- ✅ Persistent cloud storage for product evaluations
+- ✅ Row Level Security (RLS) for data isolation
+- ✅ Monthly evaluation limits per subscription plan
+- ✅ Graceful fallback to localStorage if Supabase is not configured
+
+**Setup Guide:** See [`SUPABASE_SETUP.md`](SUPABASE_SETUP.md) for detailed instructions on setting up Supabase.
+
+
 ## 🎯 Mission
 
 Help foreigners in Austria sell items on willhaben.at without knowing German by providing:

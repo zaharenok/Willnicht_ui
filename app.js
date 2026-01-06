@@ -12,7 +12,7 @@ const CONFIG = {
     webhookUrl: 'YOUR_WEBHOOK_URL_HERE',
 
     // User settings
-    userEmail: 'user@example.com',
+    userEmail: null, // Will be set from Supabase auth
     languageChoice: 'German', // Default language for descriptions
     pageAndSection: 'https://www.willnicht.com/app#form1',
 
@@ -24,8 +24,11 @@ const CONFIG = {
     // UI settings
     animationDuration: 300,
 
-    // Storage keys
-    storageKey: 'willnicht_results'
+    // Storage keys (legacy, will be migrated to Supabase)
+    storageKey: 'willnicht_results',
+    
+    // Supabase integration
+    useSupabase: true, // Set to false to use localStorage fallback
 };
 
 // ========================================
@@ -74,9 +77,7 @@ const elements = {
     exportBtn: document.getElementById('exportBtn'),
     clearBtn: document.getElementById('clearBtn'),
     // Auth elements
-    loginSection: document.getElementById('loginSection'),
     appWrapper: document.getElementById('appWrapper'),
-    loginForm: document.getElementById('loginForm'),
     userMenu: document.getElementById('userMenu'),
     logoutBtn: document.getElementById('logoutBtn'),
     userEmailDisplay: document.getElementById('userEmailDisplay'),
@@ -147,8 +148,13 @@ function initHeaderScroll() {
 function initSmoothScroll() {
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', (e) => {
+            const href = anchor.getAttribute('href');
+            // Skip empty hash links
+            if (!href || href === '#') {
+                return;
+            }
             e.preventDefault();
-            const target = document.querySelector(anchor.getAttribute('href'));
+            const target = document.querySelector(href);
             if (target) {
                 const headerHeight = elements.header?.offsetHeight || 0;
                 const targetPosition = target.offsetTop - headerHeight - 20;
@@ -295,6 +301,20 @@ function initButtons() {
 async function handleAnalyze() {
     if (state.files.length === 0 || state.isLoading) return;
 
+    // Check if user can create evaluation (Supabase only)
+    if (CONFIG.useSupabase && isSupabaseConfigured() && currentUser) {
+        try {
+            const canCreate = await canCreateEvaluation();
+            if (!canCreate) {
+                showNotification(t('notify_limit_reached') || 'Достигнут лимит оценок за месяц', 'warning');
+                return;
+            }
+        } catch (error) {
+            console.warn('Could not check evaluation limit:', error);
+            // Continue anyway, let the database handle it
+        }
+    }
+
     state.isLoading = true;
     elements.analyzeBtn?.classList.add('loading');
     elements.analyzeBtn?.setAttribute('aria-busy', 'true');
@@ -307,13 +327,17 @@ async function handleAnalyze() {
         const marketLangSelect = document.getElementById('marketplaceLangSelect');
         const additionalTextInput = document.getElementById('additionalText');
 
+        // Capture language preferences
+        const userLanguage = userLangSelect ? userLangSelect.value : 'Russian';
+        const marketplaceLanguage = marketLangSelect ? marketLangSelect.value : 'German';
+
         // Create FormData (Multipart)
         const formData = new FormData();
 
         // Append text fields
-        formData.append("email", CONFIG.userEmail);
-        formData.append("user_language", userLangSelect ? userLangSelect.value : 'Russian');
-        formData.append("marketplace_language", marketLangSelect ? marketLangSelect.value : 'German');
+        formData.append("email", CONFIG.userEmail || 'demo@example.com');
+        formData.append("user_language", userLanguage);
+        formData.append("marketplace_language", marketplaceLanguage);
         formData.append("source_url", CONFIG.pageAndSection);
         formData.append("additional_text", additionalTextInput ? additionalTextInput.value : '');
 
@@ -369,12 +393,16 @@ async function handleAnalyze() {
                     recommendedPrice: suggestedPriceNum || 0,
                     image: state.files[index]?.preview || '',
                     createdAt: new Date().toISOString(),
-                    expiresAt: Date.now() + 15 * 60 * 1000 // 15 minutes from now
+                    expiresAt: Date.now() + 15 * 60 * 1000, // 15 minutes from now
+                    webhookId: item.ID || null,
+                    confidence: item.confidence || null,
+                    userLanguage: userLanguage,
+                    marketplaceLanguage: marketplaceLanguage
                 };
                 state.results.unshift(result);
             });
 
-            saveResults();
+            await saveResults();
             renderResults();
             showNotification(t('notify_success'), 'success');
 
@@ -565,6 +593,12 @@ function renderResultCard(item, isLatest = false) {
                 <button class="btn btn-secondary" onclick="publishToWillhaben()">
                     ${t('btn_publish')}
                 </button>
+                <button class="btn btn-ghost btn-delete" onclick="deleteResult('${item.id}')" aria-label="Удалить">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path>
+                    </svg>
+                </button>
             </div>
             <div class="result-footer">
                 <!-- Timer disabled for testing -->
@@ -655,6 +689,39 @@ function copyDescription(id) {
     });
 }
 
+/**
+ * Delete a single result
+ * @param {string} id - Result ID to delete
+ */
+async function deleteResult(id) {
+    if (!confirm(t('confirm_delete') || 'Удалить эту оценку?')) {
+        return;
+    }
+
+    // Try to delete from Supabase first
+    if (CONFIG.useSupabase && isSupabaseConfigured() && currentUser) {
+        try {
+            await deleteListing(id);
+            showNotification(t('notify_deleted') || 'Оценка удалена', 'success');
+        } catch (error) {
+            console.warn('Could not delete from Supabase:', error);
+            // Continue with local deletion
+        }
+    }
+
+    // Remove from local state
+    state.results = state.results.filter(r => r.id !== id);
+
+    // Save updated state
+    saveResults();
+    renderResults();
+
+    showNotification(t('notify_deleted') || 'Оценка удалена', 'success');
+}
+
+// Make function globally available
+window.deleteResult = deleteResult;
+
 function handleExport() {
     if (state.results.length === 0) {
         showNotification(t('notify_no_results'), 'warning');
@@ -666,10 +733,31 @@ function handleExport() {
     showNotification(t('notify_exported'), 'success');
 }
 
-function handleClear() {
+async function handleClear() {
     if (state.results.length === 0) return;
 
     if (confirm(t('confirm_clear'))) {
+        // Try to delete from Supabase if configured
+        if (CONFIG.useSupabase && isSupabaseConfigured() && currentUser) {
+            try {
+                const supabase = getSupabase();
+                if (supabase) {
+                    // Delete all user's listings
+                    const { error } = await supabase
+                        .from('listings')
+                        .delete()
+                        .gte('created_at', '1970-01-01'); // Delete all (will be filtered by RLS)
+                    
+                    if (error) {
+                        console.warn('Could not delete from Supabase:', error);
+                    }
+                }
+            } catch (error) {
+                console.warn('Could not delete from Supabase:', error);
+            }
+        }
+
+        // Clear local state
         state.results = [];
         saveResults();
         renderResults();
@@ -707,9 +795,128 @@ function downloadFile(content, filename, type) {
 }
 
 // ========================================
-// LOCAL STORAGE
+// DATA STORAGE (Supabase + localStorage fallback)
 // ========================================
-function saveResults() {
+
+/**
+ * Save results to storage (Supabase or localStorage)
+ */
+async function saveResults() {
+    // Save the latest result to Supabase if available
+    if (state.results.length > 0 && CONFIG.useSupabase && isSupabaseConfigured() && currentUser) {
+        try {
+            // Only save the newest result to Supabase
+            const latestResult = state.results[0];
+            await saveListingToSupabase(latestResult);
+            // Update evaluations count after saving
+            await updateEvaluationsCount();
+        } catch (error) {
+            console.warn('Could not save to Supabase:', error);
+            // Fallback to localStorage
+            saveResultsToLocalStorage();
+            await updateEvaluationsCount();
+        }
+    } else {
+        // Use localStorage fallback
+        saveResultsToLocalStorage();
+        await updateEvaluationsCount();
+    }
+}
+
+/**
+ * Save a single listing to Supabase
+ */
+async function saveListingToSupabase(result) {
+    const supabase = getSupabase();
+    if (!supabase) {
+        throw new Error('Supabase client not initialized');
+    }
+
+    // Check if user can create evaluation
+    const canCreate = await canCreateEvaluation();
+    if (!canCreate) {
+        showNotification(t('notify_limit_reached') || 'Достигнут лимит оценок за месяц', 'warning');
+        throw new Error('Evaluation limit reached');
+    }
+
+    const listingData = {
+        title: result.title,
+        description: result.description,
+        category: result.category,
+        market_price_min: result.marketPrice.min,
+        market_price_max: result.marketPrice.max,
+        recommended_price: result.recommendedPrice,
+        currency: result.marketPrice.currency,
+        image_data: result.image,
+        webhook_id: result.webhookId || null,
+        confidence: result.confidence || null,
+        user_language: result.userLanguage || null,
+        marketplace_language: result.marketplaceLanguage || null
+    };
+
+    const { data, error } = await supabase
+        .from('listings')
+        .insert([listingData])
+        .select()
+        .single();
+
+    if (error) {
+        throw error;
+    }
+
+    // Update the result with the Supabase ID
+    result.id = data.id;
+    console.log('Listing saved to Supabase:', data.id);
+
+    return data;
+}
+
+/**
+ * Load listings from Supabase for the current user
+ */
+async function loadListingsFromSupabase() {
+    const supabase = getSupabase();
+    if (!supabase || !currentUser) {
+        return;
+    }
+
+    try {
+        const listings = await fetchListings();
+        
+        // Convert Supabase listings to app format
+        state.results = listings.map(listing => ({
+            id: listing.id,
+            title: listing.title,
+            description: listing.description,
+            category: listing.category,
+            marketPrice: {
+                min: listing.market_price_min,
+                max: listing.market_price_max,
+                currency: listing.currency
+            },
+            recommendedPrice: listing.recommended_price,
+            image: listing.image_data,
+            createdAt: listing.created_at,
+            updatedAt: listing.updated_at,
+            webhookId: listing.webhook_id,
+            confidence: listing.confidence,
+            userLanguage: listing.user_language,
+            marketplaceLanguage: listing.marketplace_language
+        }));
+
+        console.log(`Loaded ${state.results.length} listings from Supabase`);
+        renderResults();
+    } catch (error) {
+        console.error('Error loading listings from Supabase:', error);
+        // Fallback to localStorage
+        loadSavedResultsFromLocalStorage();
+    }
+}
+
+/**
+ * Save results to localStorage (fallback)
+ */
+function saveResultsToLocalStorage() {
     try {
         localStorage.setItem(CONFIG.storageKey, JSON.stringify(state.results));
     } catch (e) {
@@ -717,7 +924,10 @@ function saveResults() {
     }
 }
 
-function loadSavedResults() {
+/**
+ * Load saved results from localStorage (fallback)
+ */
+function loadSavedResultsFromLocalStorage() {
     try {
         const saved = localStorage.getItem(CONFIG.storageKey);
         if (saved) {
@@ -726,6 +936,18 @@ function loadSavedResults() {
         }
     } catch (e) {
         console.warn('Could not load from localStorage:', e);
+    }
+}
+
+/**
+ * Load saved results (wrapper function)
+ */
+async function loadSavedResults() {
+    // Try Supabase first, then fallback to localStorage
+    if (CONFIG.useSupabase && isSupabaseConfigured() && currentUser) {
+        await loadListingsFromSupabase();
+    } else {
+        loadSavedResultsFromLocalStorage();
     }
 }
 
@@ -802,12 +1024,225 @@ function generateId() {
 
 
 // ========================================
-// AUTHENTICATION
+// AUTHENTICATION (Supabase-based)
 // ========================================
-function initAuth() {
-    // Check if we are on the app page (has login section)
-    if (!elements.loginSection) return;
+let currentUser = null;
+let authInitialized = false;
 
+async function initAuth() {
+    // Initialize Supabase client
+    const supabase = getSupabase();
+
+    if (!supabase || !isSupabaseConfigured()) {
+        console.warn('Supabase not configured, falling back to localStorage auth');
+        initLocalStorageAuth();
+        return;
+    }
+
+    // Listen to auth state changes
+    const { data: { subscription } } = onAuthStateChange(async (event, session) => {
+        console.log('Auth state changed:', event, session);
+
+        if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
+            currentUser = session?.user || null;
+            if (currentUser) {
+                CONFIG.userEmail = currentUser.email;
+                await showApp(currentUser.email);
+                // Load user's listings from Supabase
+                await loadListingsFromSupabase();
+            }
+        } else if (event === 'SIGNED_OUT') {
+            currentUser = null;
+            CONFIG.userEmail = null;
+            // Redirect to index.html on logout
+            window.location.href = 'index.html';
+        }
+    });
+
+    // Check current session
+    const session = await getSession();
+    if (session?.user) {
+        currentUser = session.user;
+        CONFIG.userEmail = currentUser.email;
+        await showApp(currentUser.email);
+        await loadListingsFromSupabase();
+    } else {
+        // Redirect to index.html if not logged in
+        window.location.href = 'index.html';
+        return;
+    }
+
+    authInitialized = true;
+
+    // Logout Button
+    elements.logoutBtn?.addEventListener('click', async () => {
+        await handleLogout();
+    });
+}
+
+/**
+ * Handle login with email and password
+ */
+async function handleLogin(email, password) {
+    try {
+        showNotification(t('notify_logging_in') || 'Вход...', 'info');
+        
+        const data = await signIn(email, password);
+        
+        if (data.user) {
+            showNotification(t('notify_login_success') || 'Вход выполнен успешно', 'success');
+        }
+    } catch (error) {
+        console.error('Login error:', error);
+        let errorMessage = t('notify_login_error') || 'Ошибка входа';
+        
+        if (error.message.includes('Invalid login credentials')) {
+            errorMessage = t('notify_invalid_credentials') || 'Неверный email или пароль';
+        } else if (error.message.includes('Email not confirmed')) {
+            errorMessage = t('notify_email_not_confirmed') || 'Email не подтвержден';
+        } else {
+            errorMessage = `${errorMessage}: ${error.message}`;
+        }
+        
+        showNotification(errorMessage, 'error');
+    }
+}
+
+/**
+ * Handle registration with email and password
+ */
+async function handleRegister(email, password, passwordConfirm) {
+    try {
+        // Validate passwords match
+        if (password !== passwordConfirm) {
+            showNotification(t('notify_passwords_dont_match') || 'Пароли не совпадают', 'error');
+            return;
+        }
+
+        showNotification(t('notify_registering') || 'Регистрация...', 'info');
+        
+        const data = await signUp(email, password);
+        
+        if (data.user) {
+            showNotification(t('notify_register_success') || 'Регистрация успешна! Проверьте email для подтверждения', 'success');
+            // Switch to login form
+            showLogin();
+        }
+    } catch (error) {
+        console.error('Registration error:', error);
+        let errorMessage = t('notify_register_error') || 'Ошибка регистрации';
+        
+        if (error.message.includes('User already registered')) {
+            errorMessage = t('notify_user_exists') || 'Пользователь с таким email уже существует';
+        } else {
+            errorMessage = `${errorMessage}: ${error.message}`;
+        }
+        
+        showNotification(errorMessage, 'error');
+    }
+}
+
+/**
+ * Handle logout
+ */
+async function handleLogout() {
+    try {
+        await signOut();
+        showNotification(t('notify_logout_success') || 'Вы вышли из системы', 'success');
+    } catch (error) {
+        console.error('Logout error:', error);
+        showNotification(`${t('notify_logout_error') || 'Ошибка выхода'}: ${error.message}`, 'error');
+    }
+}
+
+/**
+ * Show the app interface
+ */
+async function showApp(email) {
+    CONFIG.userEmail = email;
+
+    if (elements.loginSection) elements.loginSection.hidden = true;
+    if (elements.registerSection) elements.registerSection.hidden = true;
+    if (elements.appWrapper) elements.appWrapper.classList.add('active');
+    if (elements.userMenu) elements.userMenu.hidden = false;
+    if (elements.userEmailDisplay) elements.userEmailDisplay.textContent = email;
+
+    // Update evaluations count
+    await updateEvaluationsCount();
+
+    // Also re-render results to be sure
+    renderResults();
+}
+
+/**
+ * Update the evaluations count indicator
+ */
+async function updateEvaluationsCount() {
+    const evaluationsUsedEl = document.getElementById('evaluationsUsed');
+    const evaluationsLimitEl = document.getElementById('evaluationsLimit');
+    const evaluationsCountEl = document.getElementById('evaluationsCount');
+
+    if (!evaluationsUsedEl || !evaluationsLimitEl || !evaluationsCountEl) return;
+
+    // Default values for localStorage mode
+    let used = 0;
+    let limit = 3;
+
+    // Try to get actual values from Supabase
+    if (CONFIG.useSupabase && isSupabaseConfigured() && currentUser) {
+        try {
+            used = await getUserEvaluationCount();
+
+            // Get user's limit from profile
+            const profile = await fetchProfile();
+            if (profile) {
+                limit = profile.evaluations_limit || 3;
+            }
+        } catch (error) {
+            console.warn('Could not fetch evaluation count:', error);
+            // Use localStorage count as fallback
+            used = state.results.length;
+        }
+    } else {
+        // Use localStorage count
+        used = state.results.length;
+    }
+
+    // Update UI
+    evaluationsUsedEl.textContent = used;
+    evaluationsLimitEl.textContent = limit;
+
+    // Update styling based on usage
+    evaluationsCountEl.classList.remove('near-limit', 'at-limit');
+    if (used >= limit) {
+        evaluationsCountEl.classList.add('at-limit');
+    } else if (used >= limit * 0.8) {
+        evaluationsCountEl.classList.add('near-limit');
+    }
+}
+
+/**
+ * Show the login form
+ */
+function showLogin() {
+    if (elements.loginSection) elements.loginSection.hidden = false;
+    if (elements.registerSection) elements.registerSection.hidden = true;
+    if (elements.appWrapper) elements.appWrapper.classList.remove('active');
+    if (elements.userMenu) elements.userMenu.hidden = true;
+}
+
+/**
+ * Show the register form
+ */
+function showRegister() {
+    // Not used in app.html anymore (registration happens in modal on index.html)
+    console.log('showRegister() called - deprecated for app.html');
+}
+
+// ========================================
+// FALLBACK: LocalStorage Auth (when Supabase not configured)
+// ========================================
+function initLocalStorageAuth() {
     const savedEmail = localStorage.getItem('user_email');
 
     if (savedEmail) {
@@ -823,45 +1258,27 @@ function initAuth() {
         e.preventDefault();
         const emailInput = document.getElementById('email');
         if (emailInput && emailInput.value) {
-            login(emailInput.value);
+            loginLocalStorage(emailInput.value);
         }
     });
 
     // Logout Button
     elements.logoutBtn?.addEventListener('click', () => {
-        logout();
+        logoutLocalStorage();
     });
 }
 
-function login(email) {
+function loginLocalStorage(email) {
     localStorage.setItem('user_email', email);
     showApp(email);
 }
 
-function logout() {
+function logoutLocalStorage() {
     localStorage.removeItem('user_email');
     showLogin();
     // Clear results on logout
     state.results = [];
     saveResults();
-}
-
-function showApp(email) {
-    CONFIG.userEmail = email;
-
-    if (elements.loginSection) elements.loginSection.hidden = true;
-    if (elements.appWrapper) elements.appWrapper.classList.add('active');
-    if (elements.userMenu) elements.userMenu.hidden = false;
-    if (elements.userEmailDisplay) elements.userEmailDisplay.textContent = email;
-
-    // Also re-render results to be sure
-    renderResults();
-}
-
-function showLogin() {
-    if (elements.loginSection) elements.loginSection.hidden = false;
-    if (elements.appWrapper) elements.appWrapper.classList.remove('active');
-    if (elements.userMenu) elements.userMenu.hidden = true;
 }
 
 // Make functions globally available
