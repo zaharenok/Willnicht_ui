@@ -1,10 +1,5 @@
 # Willnicht — AI Product Evaluation for Marketplaces
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
-[![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
-[![CSS3](https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS)
-
 **Willnicht** is a SaaS platform that helps expats and foreigners sell products on local marketplaces (willhaben.at, eBay Kleinanzeigen, etc.) by overcoming language barriers through AI-powered product evaluation.
 
 ## 🎯 Mission
