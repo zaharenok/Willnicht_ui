@@ -8,10 +8,11 @@
 // ========================================
 const CONFIG = {
     // Webhook endpoint for AI processing (Make.com)
-    webhookUrl: 'https://hook.eu1.make.com/9kor8vv2jkg97h95vs561rg10wxm99g3',
+    // Replace with your actual webhook URL
+    webhookUrl: 'YOUR_WEBHOOK_URL_HERE',
 
     // User settings
-    userEmail: 'olegzakharchenko@gmail.com',
+    userEmail: 'user@example.com',
     languageChoice: 'German', // Default language for descriptions
     pageAndSection: 'https://www.willnicht.com/app#form1',
 
