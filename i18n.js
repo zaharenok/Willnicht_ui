@@ -160,6 +160,15 @@ const TRANSLATIONS = {
         show_more: 'Показать еще',
         show_less: 'Свернуть',
 
+        // Modern UI Steps
+        step_upload: 'Загрузка',
+        step_settings: 'Настройки',
+        step_result: 'Результат',
+
+        // Empty State
+        empty_state_title: 'Загрузите первое фото',
+        empty_state_description: 'Получите готовое объявление на немецком с рыночной ценой за секунды',
+
         // Authentication
         login_title: 'Вход',
         login_subtitle: 'Введите email и пароль для доступа к сервису',
@@ -343,6 +352,15 @@ const TRANSLATIONS = {
         show_more: 'Show more',
         show_less: 'Show less',
 
+        // Modern UI Steps
+        step_upload: 'Upload',
+        step_settings: 'Settings',
+        step_result: 'Result',
+
+        // Empty State
+        empty_state_title: 'Upload your first photo',
+        empty_state_description: 'Get a ready-to-use German listing with market price in seconds',
+
         // Authentication
         login_title: 'Login',
         login_subtitle: 'Enter email and password to access the service',
@@ -523,6 +541,15 @@ const TRANSLATIONS = {
         placeholder_additional_text: 'Z.B. "Vintage-Artikel, bitte Mängel beachten..."',
         show_more: 'Mehr anzeigen',
         show_less: 'Weniger anzeigen',
+
+        // Modern UI Steps
+        step_upload: 'Upload',
+        step_settings: 'Einstellungen',
+        step_result: 'Ergebnis',
+
+        // Empty State
+        empty_state_title: 'Laden Sie Ihr erstes Foto hoch',
+        empty_state_description: 'Erhalten Sie in Sekunden eine fertige deutsche Anzeige mit Marktpreis',
 
         // Authentication
         login_title: 'Anmelden',

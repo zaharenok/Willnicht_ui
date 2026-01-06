@@ -9,7 +9,7 @@
 const CONFIG = {
     // Webhook endpoint for AI processing (Make.com)
     // Replace with your actual webhook URL
-    webhookUrl: 'YOUR_WEBHOOK_URL_HERE',
+    webhookUrl: 'https://hook.eu1.make.com/9kor8vv2jkg97h95vs561rg10wxm99g3',
 
     // User settings
     userEmail: null, // Will be set from Supabase auth
@@ -254,18 +254,48 @@ function renderPreviews() {
     const container = elements.uploadPreview;
     if (!container) return;
 
-    container.innerHTML = state.files.map(item => `
-        <div class="preview-item" data-id="${item.id}">
-            <img src="${item.preview}" alt="Preview">
-            <button class="preview-remove" onclick="removeFile('${item.id}')">&times;</button>
-        </div>
-    `).join('');
+    // Clear existing previews
+    while (container.firstChild) {
+        container.removeChild(container.firstChild);
+    }
+
+    // Add new previews
+    state.files.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'preview-item';
+        div.dataset.id = item.id;
+
+        const img = document.createElement('img');
+        img.src = item.preview;
+        img.alt = 'Preview';
+
+        const button = document.createElement('button');
+        button.className = 'preview-remove';
+        button.textContent = '×';
+        button.onclick = () => removeFile(item.id);
+
+        div.appendChild(img);
+        div.appendChild(button);
+        container.appendChild(div);
+    });
 
     // Update upload area state
     if (state.files.length > 0) {
         elements.uploadArea?.classList.add('has-files');
+
+        // Hide empty state container when files are uploaded
+        const emptyStateContainer = document.getElementById('emptyStateContainer');
+        if (emptyStateContainer) {
+            emptyStateContainer.hidden = true;
+        }
     } else {
         elements.uploadArea?.classList.remove('has-files');
+
+        // Show empty state container when no files
+        const emptyStateContainer = document.getElementById('emptyStateContainer');
+        if (emptyStateContainer) {
+            emptyStateContainer.hidden = false;
+        }
     }
 }
 
@@ -285,8 +315,16 @@ function updateAnalyzeButton() {
 // BUTTONS
 // ========================================
 function initButtons() {
+    console.log('=== initButtons called ===');
+    console.log('analyzeBtn element:', elements.analyzeBtn);
+
     // Analyze button
-    elements.analyzeBtn?.addEventListener('click', handleAnalyze);
+    if (elements.analyzeBtn) {
+        console.log('Adding click listener to analyzeBtn');
+        elements.analyzeBtn.addEventListener('click', handleAnalyze);
+    } else {
+        console.error('analyzeBtn not found!');
+    }
 
     // Export button
     elements.exportBtn?.addEventListener('click', handleExport);
@@ -299,22 +337,44 @@ function initButtons() {
 // ANALYZE HANDLER
 // ========================================
 async function handleAnalyze() {
-    if (state.files.length === 0 || state.isLoading) return;
+    console.log('=== handleAnalyze called ===');
+    console.log('state.files.length:', state.files.length);
+    console.log('state.isLoading:', state.isLoading);
+
+    if (state.files.length === 0 || state.isLoading) {
+        console.log('Exiting early: no files or already loading');
+        return;
+    }
 
     // Check if user can create evaluation (Supabase only)
+    console.log('Checking Supabase evaluation limit...');
+    console.log('CONFIG.useSupabase:', CONFIG.useSupabase);
+    console.log('isSupabaseConfigured():', isSupabaseConfigured());
+    console.log('currentUser:', currentUser);
+
     if (CONFIG.useSupabase && isSupabaseConfigured() && currentUser) {
         try {
-            const canCreate = await canCreateEvaluation();
+            console.log('Calling canCreateEvaluation()...');
+            // Add timeout to prevent hanging
+            const timeoutPromise = new Promise((_, reject) =>
+                setTimeout(() => reject(new Error('Timeout')), 3000)
+            );
+            const canCreate = await Promise.race([canCreateEvaluation(), timeoutPromise]);
+            console.log('canCreate result:', canCreate);
             if (!canCreate) {
                 showNotification(t('notify_limit_reached') || 'Достигнут лимит оценок за месяц', 'warning');
                 return;
             }
         } catch (error) {
             console.warn('Could not check evaluation limit:', error);
-            // Continue anyway, let the database handle it
+            // Continue anyway - don't block the upload
+            console.log('Continuing with upload despite limit check failure...');
         }
+    } else {
+        console.log('Skipping Supabase check (conditions not met)');
     }
 
+    console.log('Starting analysis process...');
     state.isLoading = true;
     elements.analyzeBtn?.classList.add('loading');
     elements.analyzeBtn?.setAttribute('aria-busy', 'true');
@@ -335,19 +395,30 @@ async function handleAnalyze() {
         const formData = new FormData();
 
         // Append text fields
-        formData.append("email", CONFIG.userEmail || 'demo@example.com');
+        const userEmail = CONFIG.userEmail || currentUser?.email || 'olegzakharchenko@gmail.com';
+        formData.append("email", userEmail);
         formData.append("user_language", userLanguage);
         formData.append("marketplace_language", marketplaceLanguage);
         formData.append("source_url", CONFIG.pageAndSection);
         formData.append("additional_text", additionalTextInput ? additionalTextInput.value : '');
 
-        // Append files
-        state.files.forEach(item => {
-            // item.file is the actual File object from input info
-            formData.append("image", item.file);
+        // Append files - CRITICAL FIX: append actual File objects, not wrapped objects
+        state.files.forEach((item, index) => {
+            console.log(`Appending file ${index}:`, {
+                name: item.file.name,
+                type: item.file.type,
+                size: item.file.size
+            });
+            formData.append("image", item.file); // item.file is the actual File object
         });
 
         console.log('Sending to webhook:', CONFIG.webhookUrl);
+        console.log('Email:', userEmail);
+        console.log('Files count:', state.files.length);
+
+        // Debug FormData contents
+        const formDataEntries = Array.from(formData.entries());
+        console.log('FormData entries:', formDataEntries.map(e => `${e[0]}: ${e[1]}`));
 
         // Send to webhook (Multipart)
         const response = await fetch(CONFIG.webhookUrl, {
@@ -370,7 +441,11 @@ async function handleAnalyze() {
             // If response is array, process each item
             const items = Array.isArray(data) ? data : [data];
 
+            console.log('Processing items:', items.length);
+
             items.forEach((item, index) => {
+                console.log(`Processing item ${index}:`, item);
+
                 // Parse market price (format: "25 EUR" or similar)
                 const marketPriceStr = item.market_price || '0 EUR';
                 const marketPriceNum = parseFloat(marketPriceStr.replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
@@ -382,7 +457,7 @@ async function handleAnalyze() {
                 // Map webhook response to our format
                 const result = {
                     id: generateId(),
-                    title: item.german_title || item.item || item.title || `Товар ${index + 1}`,
+                    title: item.item || item.german_title || item.title || `Товар ${index + 1}`,
                     description: item.german_text || item.description || item.text || '',
                     category: item.category || 'Sonstiges',
                     marketPrice: {
@@ -399,10 +474,20 @@ async function handleAnalyze() {
                     userLanguage: userLanguage,
                     marketplaceLanguage: marketplaceLanguage
                 };
+
+                console.log('Created result:', result);
                 state.results.unshift(result);
             });
 
+            console.log('Total results after processing:', state.results.length);
             await saveResults();
+
+            // Reload from Supabase to ensure we have the latest data with proper IDs
+            if (CONFIG.useSupabase && isSupabaseConfigured() && currentUser) {
+                console.log('Reloading listings from Supabase after save...');
+                await loadListingsFromSupabase();
+            }
+
             renderResults();
             showNotification(t('notify_success'), 'success');
 
@@ -487,15 +572,27 @@ function generateMockResults() {
 // RESULTS RENDERING
 // ========================================
 function renderResults() {
+    console.log('=== renderResults called ===');
+    console.log('state.results.length:', state.results.length);
+
     const grid = elements.resultsGrid;
     const section = elements.resultsSection;
     const empty = elements.resultsEmpty;
     const latestContainer = elements.latestResultContainer;
     const latestContent = elements.latestResultContent;
 
-    if (!grid) return;
+    console.log('grid element:', grid);
+    console.log('section element:', section);
+    console.log('latestContainer element:', latestContainer);
+    console.log('latestContent element:', latestContent);
+
+    if (!grid) {
+        console.error('resultsGrid element not found!');
+        return;
+    }
 
     if (state.results.length === 0) {
+        console.log('No results to display');
         section?.classList.remove('active');
         if (latestContainer) latestContainer.hidden = true;
         if (empty) empty.hidden = false; // Show empty state for history
@@ -508,11 +605,17 @@ function renderResults() {
 
     // 1. Render Latest Result (The first item)
     if (state.results.length > 0) {
+        console.log('Rendering latest result');
         if (latestContainer) latestContainer.hidden = false;
         const latestItem = state.results[0];
+        console.log('Latest item:', latestItem);
 
         if (latestContent) {
-            latestContent.innerHTML = renderResultCard(latestItem, true);
+            const cardHTML = renderResultCard(latestItem, true);
+            console.log('Generated card HTML length:', cardHTML.length);
+            latestContent.innerHTML = cardHTML;
+        } else {
+            console.error('latestContent element not found!');
         }
     }
 
@@ -802,42 +905,125 @@ function downloadFile(content, filename, type) {
  * Save results to storage (Supabase or localStorage)
  */
 async function saveResults() {
-    // Save the latest result to Supabase if available
+    console.log('=== saveResults called ===');
+    console.log('state.results.length:', state.results.length);
+    console.log('CONFIG.useSupabase:', CONFIG.useSupabase);
+    console.log('isSupabaseConfigured():', isSupabaseConfigured());
+    console.log('currentUser:', currentUser);
+
+    // ALWAYS save to localStorage first as backup
+    console.log('Saving to localStorage as backup...');
+    saveResultsToLocalStorage();
+
+    // Try to save the latest result to Supabase if available
     if (state.results.length > 0 && CONFIG.useSupabase && isSupabaseConfigured() && currentUser) {
+        console.log('Attempting to save to Supabase...');
         try {
             // Only save the newest result to Supabase
             const latestResult = state.results[0];
+            console.log('Saving latest result to Supabase:', latestResult.title);
             await saveListingToSupabase(latestResult);
+            console.log('Successfully saved to Supabase');
             // Update evaluations count after saving
             await updateEvaluationsCount();
+            console.log('Updated evaluations count');
         } catch (error) {
-            console.warn('Could not save to Supabase:', error);
-            // Fallback to localStorage
-            saveResultsToLocalStorage();
-            await updateEvaluationsCount();
+            console.error('Could not save to Supabase:', error);
+            console.log('Results are saved in localStorage, continuing...');
+            // Already saved to localStorage above, no need to do it again
         }
     } else {
-        // Use localStorage fallback
-        saveResultsToLocalStorage();
-        await updateEvaluationsCount();
+        console.log('Using localStorage (conditions not met for Supabase)');
     }
+    console.log('=== saveResults completed ===');
+}
+
+/**
+ * Resize image for Supabase storage to reduce base64 size
+ * @param {string} base64Image - Base64 encoded image
+ * @returns {Promise<string>} Resized base64 image
+ */
+async function resizeImageForSupabase(base64Image) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => {
+            // Create canvas with max dimensions 800x800
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            // Calculate new dimensions maintaining aspect ratio
+            const maxDimension = 800;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > height) {
+                if (width > maxDimension) {
+                    height = (height * maxDimension) / width;
+                    width = maxDimension;
+                }
+            } else {
+                if (height > maxDimension) {
+                    width = (width * maxDimension) / height;
+                    height = maxDimension;
+                }
+            }
+
+            canvas.width = Math.round(width);
+            canvas.height = Math.round(height);
+
+            // Draw resized image
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+            // Convert to base64 with reduced quality (0.7)
+            const resizedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+            resolve(resizedBase64);
+        };
+        img.onerror = () => reject(new Error('Failed to load image for resizing'));
+        img.src = base64Image;
+    });
 }
 
 /**
  * Save a single listing to Supabase
  */
 async function saveListingToSupabase(result) {
+    console.log('=== saveListingToSupabase called ===');
+    console.log('Result to save:', result.title);
+
     const supabase = getSupabase();
     if (!supabase) {
         throw new Error('Supabase client not initialized');
     }
 
     // Check if user can create evaluation
-    const canCreate = await canCreateEvaluation();
-    if (!canCreate) {
-        showNotification(t('notify_limit_reached') || 'Достигнут лимит оценок за месяц', 'warning');
-        throw new Error('Evaluation limit reached');
+    console.log('Checking if user can create evaluation...');
+    // SKIP THIS CHECK FOR NOW - it's causing timeouts
+    // TODO: Fix Supabase RPC functions properly
+    /*
+    try {
+        // Add timeout to prevent hanging
+        const timeoutPromise = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Timeout checking evaluation limit')), 3000)
+        );
+        const canCreate = await Promise.race([canCreateEvaluation(), timeoutPromise]);
+        console.log('canCreateEvaluation result:', canCreate);
+
+        if (!canCreate) {
+            showNotification(t('notify_limit_reached') || 'Достигнут лимит оценок за месяц', 'warning');
+            throw new Error('Evaluation limit reached');
+        }
+    } catch (error) {
+        console.warn('Could not check evaluation limit in saveListingToSupabase:', error);
+        // Continue with save anyway - don't block
+        console.log('Continuing with save despite limit check failure...');
     }
+    */
+
+    // Resize image before saving to Supabase to avoid timeout
+    console.log('Processing image for Supabase...');
+    const processedImage = await resizeImageForSupabase(result.image);
+    console.log('Original image size:', result.image.length, 'bytes');
+    console.log('Processed image size:', processedImage.length, 'bytes');
 
     const listingData = {
         title: result.title,
@@ -847,26 +1033,39 @@ async function saveListingToSupabase(result) {
         market_price_max: result.marketPrice.max,
         recommended_price: result.recommendedPrice,
         currency: result.marketPrice.currency,
-        image_data: result.image,
+        image_data: processedImage, // Use resized image
         webhook_id: result.webhookId || null,
         confidence: result.confidence || null,
         user_language: result.userLanguage || null,
-        marketplace_language: result.marketplaceLanguage || null
+        marketplace_language: result.marketplaceLanguage || null,
+        user_id: currentUser.id // CRITICAL: Link to current user
     };
 
-    const { data, error } = await supabase
+    console.log('Inserting listing data into Supabase...');
+
+    // Add timeout to prevent hanging
+    const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Timeout saving to Supabase')), 10000) // 10 second timeout
+    );
+
+    const insertPromise = supabase
         .from('listings')
         .insert([listingData])
         .select()
         .single();
 
+    const { data, error } = await Promise.race([insertPromise, timeoutPromise]);
+
     if (error) {
+        console.error('Supabase insert error:', error);
         throw error;
     }
 
+    console.log('Supabase insert successful, data:', data);
+
     // Update the result with the Supabase ID
     result.id = data.id;
-    console.log('Listing saved to Supabase:', data.id);
+    console.log('Listing saved to Supabase with ID:', data.id);
 
     return data;
 }
@@ -875,14 +1074,24 @@ async function saveListingToSupabase(result) {
  * Load listings from Supabase for the current user
  */
 async function loadListingsFromSupabase() {
+    console.log('=== loadListingsFromSupabase called ===');
     const supabase = getSupabase();
     if (!supabase || !currentUser) {
+        console.log('Skipping loadListingsFromSupabase: supabase=', !!supabase, 'currentUser=', !!currentUser);
         return;
     }
 
     try {
-        const listings = await fetchListings();
-        
+        console.log('Fetching listings from Supabase...');
+
+        // Add timeout to prevent hanging
+        const timeoutPromise = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Timeout fetching listings')), 10000) // 10 second timeout
+        );
+        const listings = await Promise.race([fetchListings(), timeoutPromise]);
+
+        console.log(`Fetched ${listings.length} listings from Supabase`);
+
         // Convert Supabase listings to app format
         state.results = listings.map(listing => ({
             id: listing.id,
@@ -905,10 +1114,12 @@ async function loadListingsFromSupabase() {
         }));
 
         console.log(`Loaded ${state.results.length} listings from Supabase`);
+        console.log('state.results after loading from Supabase:', state.results.length);
         renderResults();
     } catch (error) {
         console.error('Error loading listings from Supabase:', error);
         // Fallback to localStorage
+        console.log('Falling back to localStorage...');
         loadSavedResultsFromLocalStorage();
     }
 }
@@ -1046,10 +1257,18 @@ async function initAuth() {
         if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
             currentUser = session?.user || null;
             if (currentUser) {
+                console.log('User signed in:', currentUser.email);
                 CONFIG.userEmail = currentUser.email;
                 await showApp(currentUser.email);
-                // Load user's listings from Supabase
+
+                // Load from localStorage FIRST for immediate display
+                console.log('Loading from localStorage...');
+                loadSavedResultsFromLocalStorage();
+
+                // Then try to load from Supabase
+                console.log('Loading user listings from Supabase...');
                 await loadListingsFromSupabase();
+                console.log('Finished loading user listings');
             }
         } else if (event === 'SIGNED_OUT') {
             currentUser = null;
@@ -1062,17 +1281,35 @@ async function initAuth() {
     // Check current session
     const session = await getSession();
     if (session?.user) {
+        console.log('Found existing session:', session.user.email);
         currentUser = session.user;
         CONFIG.userEmail = currentUser.email;
         await showApp(currentUser.email);
+
+        // Load from localStorage FIRST for immediate display
+        console.log('Loading from localStorage...');
+        loadSavedResultsFromLocalStorage();
+
+        console.log('Loading existing user listings from Supabase...');
         await loadListingsFromSupabase();
+        console.log('Finished loading existing user listings');
     } else {
-        // Redirect to index.html if not logged in
-        window.location.href = 'index.html';
-        return;
+        // Don't redirect immediately - wait for auth state change listener
+        // The INITIAL_SESSION event will fire if session is being restored
+        console.log('No session found, waiting for auth state change...');
     }
 
     authInitialized = true;
+
+    // Set a timeout to redirect if still no session after 2 seconds
+    // This gives Supabase time to restore the session from localStorage
+    setTimeout(async () => {
+        const finalSession = await getSession();
+        if (!finalSession?.user) {
+            console.log('No session restored after timeout, redirecting to login');
+            window.location.href = 'index.html';
+        }
+    }, 2000);
 
     // Logout Button
     elements.logoutBtn?.addEventListener('click', async () => {
