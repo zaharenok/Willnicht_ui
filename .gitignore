@@ -44,6 +44,11 @@ business_logic.md
 site_logic.md
 info.md
 COOKIES_IMPORT_GUIDE.md
+WEBHOOK_API.md
+
+# Development scripts
+import_cookies_to_chrome.py
+debug_webhook.py
 
 # Test images
 IMG_*.JPG
