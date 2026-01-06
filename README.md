@@ -207,7 +207,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 📧 Contact
 
 - **GitHub**: https://github.com/zaharenok
-- **Email**: user@example.com
 - **Issues**: https://github.com/zaharenok/Willnicht_ui/issues
 
 ## 🙏 Acknowledgments
