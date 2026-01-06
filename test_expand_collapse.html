@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Expand/Collapse + Willhaben Button</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: #f5f5f5;
+        }
+
+        .test-header {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .result-category {
+            display: inline-block;
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .result-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #333;
+        }
+
+        /* NEW: Expand/Collapse Styles */
+        .result-description {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 16px;
+            position: relative;
+            transition: max-height 0.3s ease;
+        }
+
+        .result-description.collapsed {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            max-height: 4.8em;
+        }
+
+        .result-description.expanded {
+            max-height: none;
+            display: block;
+        }
+
+        .result-description.collapsed::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1.6em;
+            background: linear-gradient(
+                to bottom,
+                transparent,
+                rgba(255, 255, 255, 0.9),
+                white
+            );
+            pointer-events: none;
+        }
+
+        .result-description-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #ff3b30;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px 0;
+            transition: color 0.2s;
+        }
+
+        .result-description-toggle:hover {
+            color: #d32f2f;
+        }
+
+        .result-description-toggle svg {
+            width: 16px;
+            height: 16px;
+            transition: transform 0.3s;
+        }
+
+        .result-description-toggle[aria-expanded="true"] svg {
+            transform: rotate(180deg);
+        }
+
+        .result-prices {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 16px;
+            border-top: 1px solid #e0e0e0;
+            margin-bottom: 16px;
+        }
+
+        .result-price-label {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 4px;
+        }
+
+        .result-price-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .result-price.recommended .result-price-value {
+            color: #ff3b30;
+        }
+
+        .result-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #ff3b30;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #d32f2f;
+        }
+
+        .btn-secondary {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .btn-secondary:hover {
+            background: #bbdefb;
+        }
+
+        .info-box {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .info-box h3 {
+            margin-top: 0;
+            color: #2e7d32;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-left: 8px;
+        }
+
+        .status.success {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-header">
+        <h1>🧪 Test Page: Expand/Collapse + Willhaben Button</h1>
+        <p>Тестируем новые функции UI для Willnicht</p>
+        <div class="info-box">
+            <h3>✅ Что тестируем:</h3>
+            <ol>
+                <li><strong>Expand/Collapse</strong> - Кнопка "Показать еще" для длинных описаний</li>
+                <li><strong>Gradient Fade</strong> - Плавный градиент на свернутом тексте</li>
+                <li><strong>Willhaben Button</strong> - Открытие willhaben.at в новой вкладке</li>
+                <li><strong>Toggle Animation</strong> - Вращение стрелочки при клике</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="test-grid" id="testGrid">
+        <!-- Cards will be inserted here by JavaScript -->
+    </div>
+
+    <script>
+        // Mock data for testing
+        const mockItems = [
+            {
+                title: 'Vintage Omega Uhr',
+                description: 'Mechanische Omega Seamaster Uhr aus den 1960er Jahren in ausgezeichnetem Zustand. Originales Lederarmband, funktioniert einwandfrei. Perfekt für Sammler. Dieses Uhrenmodell ist ein echter Klassiker und wurde sehr gepflegt. Mit Originalverpackung und Serviceheft.',
+                category: 'Uhren & Schmuck',
+                priceMin: 150,
+                priceMax: 200,
+                recommended: 179
+            },
+            {
+                title: 'iPhone 13 Pro 256GB',
+                description: 'Kurzes описание.',
+                category: 'Handys & Smartphones',
+                priceMin: 550,
+                priceMax: 650,
+                recommended: 599
+            },
+            {
+                title: 'IKEA KALLAX Regal',
+                description: 'IKEA KALLAX Regal in Weiß, 4x4 Fächer. Sehr guter Zustand, keine Beschädigungen. Maße: 147x147 cm. Selbstabholung in Wien. Perfekt für Bücher, Deko oder als Raumteiler. Einfach aufzubauen, inklusive Aufbauanleitung. Alle Einlagen und Befestigungen vorhanden.',
+                category: 'Möbel',
+                priceMin: 40,
+                priceMax: 60,
+                recommended: 45
+            }
+        ];
+
+        function renderCard(item, index) {
+            const needsTruncation = item.description.length > 180;
+            const descriptionId = `desc-${index}`;
+
+            return `
+                <div class="result-card">
+                    <span class="result-category">${item.category}</span>
+                    <h3 class="result-title">${item.title}</h3>
+
+                    <p class="result-description collapsed"
+                       id="${descriptionId}">
+                        ${item.description}
+                    </p>
+
+                    ${needsTruncation ? `
+                        <button class="result-description-toggle"
+                                onclick="toggleDescription('${descriptionId}', this)"
+                                aria-expanded="false"
+                                aria-controls="${descriptionId}">
+                            <span>Показать еще</span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                    ` : '<p style="color: #4caf50; font-size: 12px;">✅ Короткое описание (не обрезается)</p>'}
+
+                    <div class="result-prices">
+                        <div class="result-price">
+                            <div class="result-price-label">Marktpreis</div>
+                            <div class="result-price-value">€${item.priceMin} — ${item.priceMax}</div>
+                        </div>
+                        <div class="result-price recommended">
+                            <div class="result-price-label">Empfohlen</div>
+                            <div class="result-price-value">€${item.recommended}</div>
+                        </div>
+                    </div>
+
+                    <div class="result-actions">
+                        <button class="btn btn-primary" onclick="copyToClipboard(this)">
+                            📋 Kopieren
+                        </button>
+                        <button class="btn btn-secondary" onclick="publishToWillhaben()">
+                            🌐 Auf willhaben
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function toggleDescription(id, btn) {
+            const descEl = document.getElementById(id);
+            const textEl = btn.querySelector('span');
+            const isExpanded = descEl.classList.contains('expanded');
+
+            if (isExpanded) {
+                // Collapse
+                descEl.classList.remove('expanded');
+                descEl.classList.add('collapsed');
+                btn.setAttribute('aria-expanded', 'false');
+                textEl.textContent = 'Показать еще';
+            } else {
+                // Expand
+                descEl.classList.remove('collapsed');
+                descEl.classList.add('expanded');
+                btn.setAttribute('aria-expanded', 'true');
+                textEl.textContent = 'Свернуть';
+            }
+        }
+
+        function copyToClipboard(btn) {
+            btn.textContent = '✅ Kopiert!';
+            setTimeout(() => {
+                btn.textContent = '📋 Kopieren';
+            }, 2000);
+        }
+
+        function publishToWillhaben() {
+            const url = 'https://www.willhaben.at/iad/anzeigenaufgabe/marktplatz?adTypeId=67&productId=67';
+            window.open(url, '_blank');
+            console.log('🌐 Opening willhaben.at...');
+        }
+
+        // Render all cards
+        const grid = document.getElementById('testGrid');
+        grid.innerHTML = mockItems.map((item, index) => renderCard(item, index)).join('');
+    </script>
+</body>
+</html>

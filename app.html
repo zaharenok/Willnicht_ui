@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Willnicht — App</title>
+
+    <!-- Primary Meta Tags -->
+    <meta name="title" content="Willnicht — AI Оценка товаров для willhaben.at">
+    <meta name="description" content="Загрузите фото товара и получите готовое объявление на немецком с рыночной ценой. Идеально для экспатов в Австрии.">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://willnicht.at/">
+    <meta property="og:title" content="Willnicht — AI Оценка товаров">
+    <meta property="og:description" content="Загрузите фото → получите готовое объявление на немецком с ценой. 3 бесплатных оценки.">
+    <meta property="og:image" content="https://willnicht.at/og-image.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://willnicht.at/">
+    <meta property="twitter:title" content="Willnicht — AI Оценка товаров">
+    <meta property="twitter:description" content="Загрузите фото → получите готовое объявление на немецком с ценой.">
+    <meta property="twitter:image" content="https://willnicht.at/og-image.jpg">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://willnicht.at/">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Germania+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <a href="#mainContent" class="skip-link">Перейти к основному содержимому</a>
+
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="container header-content">
+            <a href="index.html" class="logo">
+                <span class="logo-icon"><span>W</span></span>
+                <span class="logo-text">Willnicht</span>
+            </a>
+
+            <div class="header-actions">
+                <div class="lang-selector" id="langSelector">
+                    <button class="lang-selector-title" aria-haspopup="true" aria-expanded="false" aria-label="Выберите язык интерфейса">
+                        <span id="activeLangLabel">RU</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+                    <div class="lang-dropdown" role="menu" aria-label="Доступные языки">
+                        <button class="lang-dropdown-item" data-lang="ru" role="menuitem">Русский</button>
+                        <button class="lang-dropdown-item" data-lang="en" role="menuitem">English</button>
+                        <button class="lang-dropdown-item" data-lang="de" role="menuitem">Deutsch</button>
+                    </div>
+                </div>
+
+                <div id="userMenu" hidden>
+                    <button class="btn btn-ghost" id="logoutBtn">
+                        <span id="userEmailDisplay">user@example.com</span>
+                        <svg class="btn-icon" role="img" aria-label="Выйти" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <title>Выйти</title>
+                            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
+                            <polyline points="16 17 21 12 16 7" />
+                            <line x1="21" y1="12" x2="9" y2="12" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Login Section -->
+    <section class="login-section" id="loginSection">
+        <div class="container">
+            <div class="login-card">
+                <h2 class="login-title" data-i18n="login_title">Вход</h2>
+                <p class="login-subtitle" data-i18n="login_subtitle">Введите email для доступа к сервису</p>
+
+                <form class="login-form" id="loginForm">
+                    <div class="form-group">
+                        <label class="form-label" for="email">Email</label>
+                        <input type="email" id="email" class="form-input" placeholder="name@example.com" required autocomplete="email" aria-label="Email адрес">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full btn-large">
+                        <span data-i18n="btn_enter">Войти</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- App Wrapper (Upload + Results) -->
+    <div class="app-wrapper" id="appWrapper">
+    <main id="mainContent">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge" data-i18n="upload_badge">Попробуйте сейчас</span>
+                <h2 class="section-title" data-i18n="upload_title">Загрузите фото товара</h2>
+                <p class="section-subtitle" data-i18n="upload_subtitle">3 бесплатных оценки каждый месяц</p>
+            </div>
+
+            <div class="app-split-view">
+                <!-- Left Column: Upload -->
+                <div class="app-column-left">
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-content">
+                            <div class="upload-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+                                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                                    <polyline points="17 8 12 3 7 8" />
+                                    <line x1="12" y1="3" x2="12" y2="15" />
+                                </svg>
+                            </div>
+                            <h3 class="upload-title" data-i18n="upload_drag">Перетащите фото</h3>
+                            <p class="upload-subtitle" data-i18n="upload_click">или нажмите для выбора</p>
+                            <input type="file" id="fileInput" class="file-input" accept="image/*" multiple>
+                        </div>
+                        <div class="upload-preview" id="uploadPreview"></div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 20px;">
+                        <label class="form-label" for="additionalText" data-i18n="label_additional_text">Дополнительная информация</label>
+                        <textarea id="additionalText" class="form-textarea" rows="3" data-i18n-placeholder="placeholder_additional_text" placeholder="Бренд, размеры, состояние, дефекты..." aria-describedby="additionalTextHint"></textarea>
+                        <small id="additionalTextHint" class="form-hint" style="display: block; margin-top: 4px; font-size: 0.75rem; color: var(--color-text-muted);">
+                            Укажите детали для точной AI оценки (бренд, размеры, состояние)
+                        </small>
+                    </div>
+
+                    <button class="btn btn-primary btn-large btn-analyze" id="analyzeBtn" aria-live="polite" disabled>
+                        <span class="btn-text" data-i18n="btn_analyze">Получить оценку</span>
+                        <span class="btn-loader"></span>
+                    </button>
+                </div>
+
+                <!-- Right Column: Settings + Latest Result -->
+                <div class="app-column-right">
+                    <div class="settings-panel">
+                        <h3 class="panel-title" data-i18n="settings_title">Настройки</h3>
+                        <div class="settings-grid">
+                            <div class="setting-group">
+                                <label for="userLangSelect" data-i18n="label_your_lang">Ваш язык</label>
+                                <select id="userLangSelect" class="form-select">
+                                    <option value="Russian">Русский</option>
+                                    <option value="English">English</option>
+                                    <option value="German">Deutsch</option>
+                                    <option value="Serbian">Српски</option>
+                                </select>
+                            </div>
+                            <div class="setting-group">
+                                <label for="marketplaceLangSelect" data-i18n="label_marketplace_lang">Язык
+                                    площадки</label>
+                                <select id="marketplaceLangSelect" class="form-select">
+                                    <option value="German" selected>Deutsch (willhaben)</option>
+                                    <option value="English">English</option>
+                                    <option value="Russian">Русский</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="latestResultContainer" class="latest-result-container" hidden
+                         role="region"
+                         aria-live="polite"
+                         aria-atomic="true"
+                         aria-label="Последний результат оценки">
+                        <h3 class="panel-title" data-i18n="latest_result_title">Результат</h3>
+                        <div id="latestResultContent"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Results Section -->
+        <section class="results-section" id="results">
+            <div class="container">
+                <div class="results-header">
+                    <h2 class="results-title" data-i18n="history_title">История оценок</h2>
+                    <div class="results-actions">
+                        <button class="btn btn-secondary" id="exportBtn">
+                            <svg role="img" aria-label="Экспорт" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <title>Экспорт</title>
+                                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                                <polyline points="7 10 12 15 17 10" />
+                                <line x1="12" y1="15" x2="12" y2="3" />
+                            </svg>
+                            <span data-i18n="btn_export">Экспорт</span>
+                        </button>
+                        <button class="btn btn-ghost" id="clearBtn" data-i18n="btn_clear">Очистить</button>
+                    </div>
+                </div>
+                <div class="results-grid" id="resultsGrid"
+                     role="region"
+                     aria-live="polite"
+                     aria-atomic="false"
+                     aria-label="Все результаты оценки">
+                    <!-- History Results will be inserted here by JavaScript -->
+                </div>
+                <div class="results-empty" id="resultsEmpty" hidden>
+                    <!-- Only visible if NO results at all -->
+                    <p data-i18n="results_empty_desc_history">Здесь будут отображаться ваши предыдущие оценки</p>
+                </div>
+            </div>
+        </section>
+    </main>
+    </div>
+
+    <script src="i18n.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

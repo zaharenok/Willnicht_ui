@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Willnicht — AI-оценка товаров для маркетплейсов</title>
+    <meta name="description"
+        content="Загрузите фото товара и получите AI-описание, рыночную цену и рекомендацию для продажи за секунды">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Germania+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="container header-content">
+            <a href="/" class="logo">
+                <span class="logo-icon"><span>W</span></span>
+                <span class="logo-text">Willnicht</span>
+            </a>
+            <nav class="nav">
+                <a href="#features" class="nav-link" data-i18n="nav_features">Возможности</a>
+                <a href="#how-it-works" class="nav-link" data-i18n="nav_how_it_works">Как это работает</a>
+                <a href="#pricing" class="nav-link" data-i18n="nav_pricing">Тарифы</a>
+            </nav>
+            <div class="header-actions">
+                <a href="app.html" class="btn btn-primary nav-btn-cta" data-i18n="btn_start_free">Начать бесплатно</a>
+
+                <div class="lang-selector">
+                    <button class="lang-selector-title">
+                        <span id="activeLangLabel">RU</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+                    <div class="lang-dropdown">
+                        <button class="lang-dropdown-item" data-lang="ru">Русский</button>
+                        <button class="lang-dropdown-item" data-lang="en">English</button>
+                        <button class="lang-dropdown-item" data-lang="de">Deutsch</button>
+                    </div>
+                </div>
+            </div>
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Меню">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <nav class="mobile-nav">
+            <a href="#features" class="mobile-nav-link">Возможности</a>
+            <a href="#how-it-works" class="mobile-nav-link">Как это работает</a>
+            <a href="#pricing" class="mobile-nav-link" data-i18n="nav_pricing">Тарифы</a>
+            <a href="app.html" class="btn btn-primary btn-full" data-i18n="btn_start_free">Начать бесплатно</a>
+            <div class="mobile-lang">
+                <button class="lang-dropdown-item" data-lang="ru">Русский</button>
+                <button class="lang-dropdown-item" data-lang="en">English</button>
+                <button class="lang-dropdown-item" data-lang="de">Deutsch</button>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span class="badge-icon">✨</span>
+                    <span>Powered by AI</span>
+                </div>
+                <h1 class="hero-title">
+                    <span data-i18n="hero_title_1">Продавайте на willhaben</span>
+                    <span class="gradient-text" data-i18n="hero_title_2">без языкового барьера</span>
+                </h1>
+                <p class="hero-subtitle" data-i18n="hero_subtitle">
+                    Загрузите фото — получите описание на немецком, рыночную цену для Австрии и автоматическую
+                    публикацию на willhaben.at. Идеально для экспатов.
+                </p>
+                <div class="hero-actions">
+                    <a href="app.html" class="btn btn-primary btn-large">
+                        <span data-i18n="hero_btn_upload">Загрузить фото</span>
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
+                    </a>
+                    <a href="#how-it-works" class="btn btn-secondary btn-large" data-i18n="hero_btn_learn">Узнать
+                        больше</a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-value" data-i18n="stat_evaluated_val">10K+</span>
+                        <span class="stat-label" data-i18n="stat_evaluated">товаров оценено</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat">
+                        <span class="stat-value" data-i18n="stat_accuracy_val">98%</span>
+                        <span class="stat-label" data-i18n="stat_accuracy">точность цены</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat">
+                        <span class="stat-value" data-i18n="stat_time_val">5 сек</span>
+                        <span class="stat-label" data-i18n="stat_time">время оценки</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="hero-card">
+                    <div class="card-image">
+                        <div class="image-placeholder">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <rect x="3" y="3" width="18" height="18" rx="2" />
+                                <circle cx="8.5" cy="8.5" r="1.5" />
+                                <path d="M21 15l-5-5L5 21" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">Vintage Omega Uhr</h3>
+                        <p class="card-description">Mechanische Omega Seamaster Uhr aus den 1960er Jahren in
+                            ausgezeichnetem Zustand...</p>
+                        <div class="card-prices">
+                            <div class="price-item">
+                                <span class="price-label" data-i18n="card_market_price">Marktpreis</span>
+                                <span class="price-value">€150 — €200</span>
+                            </div>
+                            <div class="price-item recommended">
+                                <span class="price-label" data-i18n="card_recommended">Empfohlen</span>
+                                <span class="price-value">€179</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="floating-badge badge-ai" data-i18n="badge_ai">
+                    <span>🤖</span> AI анализ
+                </div>
+                <div class="floating-badge badge-fast" data-i18n="badge_fast">
+                    <span>⚡</span> 5 сек
+                </div>
+            </div>
+        </div>
+        <div class="hero-bg"></div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge" data-i18n="features_badge">Возможности</span>
+                <h2 class="section-title" data-i18n="features_title">Всё, что нужно<br>для успешных продаж</h2>
+                <p class="section-subtitle" data-i18n="features_subtitle">Автоматизируйте рутину и сфокусируйтесь на
+                    главном</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path
+                                d="M14.5 4h-5L7 7H4a2 2 0 00-2 2v9a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2h-3l-2.5-3z" />
+                            <circle cx="12" cy="13" r="3" />
+                        </svg>
+                    </div>
+                    <h3 class="feature-title" data-i18n="feature_1_title">Умное распознавание</h3>
+                    <p class="feature-description" data-i18n="feature_1_desc">AI анализирует фото и определяет
+                        категорию, бренд, состояние и
+                        особенности товара</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
+                        </svg>
+                    </div>
+                    <h3 class="feature-title" data-i18n="feature_2_title">Точная оценка</h3>
+                    <p class="feature-description" data-i18n="feature_2_desc">Алгоритм анализирует тысячи объявлений и
+                        даёт рыночную цену с
+                        точностью до 98%</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+                            <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                        </svg>
+                    </div>
+                    <h3 class="feature-title" data-i18n="feature_3_title">Готовые описания</h3>
+                    <p class="feature-description" data-i18n="feature_3_desc">Получите продающий текст для листинга с
+                        SEO-оптимизацией и тегами</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                        </svg>
+                    </div>
+                    <h3 class="feature-title" data-i18n="feature_4_title">Мгновенный результат</h3>
+                    <p class="feature-description" data-i18n="feature_4_desc">Оценка готова за 5 секунд. Загружайте до
+                        10 фото одновременно</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" />
+                            <path d="M3 9h18M9 21V9" />
+                        </svg>
+                    </div>
+                    <h3 class="feature-title" data-i18n="feature_5_title">История оценок</h3>
+                    <p class="feature-description" data-i18n="feature_5_desc">Все ваши товары сохраняются. Экспортируйте
+                        в CSV для учёта</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                        </svg>
+                    </div>
+                    <h3 class="feature-title" data-i18n="feature_6_title">Безопасность</h3>
+                    <p class="feature-description" data-i18n="feature_6_desc">Ваши данные защищены. Фото не передаются
+                        третьим лицам</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge" data-i18n="how_badge">Как это работает</span>
+                <h2 class="section-title" data-i18n="how_title">Три простых шага</h2>
+                <p class="section-subtitle" data-i18n="how_subtitle">От фото до готового листинга за минуту</p>
+            </div>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3 class="step-title" data-i18n="step_1_title">Загрузите фото</h3>
+                        <p class="step-description" data-i18n="step_1_desc">Перетащите изображения товара или выберите
+                            из галереи. Поддерживаем
+                            JPG, PNG, WebP.</p>
+                    </div>
+                    <div class="step-visual">
+                        <div class="step-icon-wrapper">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                                <polyline points="17 8 12 3 7 8" />
+                                <line x1="12" y1="3" x2="12" y2="15" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="step-connector">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3 class="step-title" data-i18n="step_2_title">AI анализирует</h3>
+                        <p class="step-description" data-i18n="step_2_desc">Нейросеть распознаёт товар, ищет аналоги и
+                            рассчитывает оптимальную
+                            цену.</p>
+                    </div>
+                    <div class="step-visual">
+                        <div class="step-icon-wrapper processing">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="M12 6v6l4 2" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="step-connector">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3 class="step-title" data-i18n="step_3_title">Получите результат</h3>
+                        <p class="step-description" data-i18n="step_3_desc">Описание, рыночная цена и рекомендация
+                            готовы. Копируйте и
+                            публикуйте!</p>
+                    </div>
+                    <div class="step-visual">
+                        <div class="step-icon-wrapper success">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+                                <polyline points="22 4 12 14.01 9 11.01" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge" data-i18n="pricing_badge">Тарифы</span>
+                <h2 class="section-title" data-i18n="pricing_title">Выберите свой план</h2>
+                <p class="section-subtitle" data-i18n="pricing_subtitle">Начните бесплатно, масштабируйтесь по мере
+                    роста</p>
+            </div>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3 class="pricing-name" data-i18n="plan_free">Free</h3>
+                        <div class="pricing-price">
+                            <span class="price-amount">€0</span>
+                            <span class="price-period" data-i18n="month">/месяц</span>
+                        </div>
+                        <p class="pricing-description" data-i18n="plan_free_desc">Для тестирования</p>
+                    </div>
+                    <ul class="pricing-features">
+                        <li data-i18n="pf_evaluations_3"><span class="check">✓</span> 3 оценки в месяц</li>
+                        <li data-i18n="pf_german_desc"><span class="check">✓</span> Описание на немецком</li>
+                        <li data-i18n="pf_price_range"><span class="check">✓</span> Диапазон цен</li>
+                        <li class="disabled" data-i18n="pf_no_listing"><span class="cross">×</span> Готовое объявление
+                        </li>
+                        <li class="disabled" data-i18n="pf_no_history"><span class="cross">×</span> История и экспорт
+                        </li>
+                    </ul>
+                    <a href="app.html" class="btn btn-secondary btn-full" data-i18n="btn_start_free">Начать
+                        бесплатно</a>
+                </div>
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3 class="pricing-name" data-i18n="plan_starter">Starter</h3>
+                        <div class="pricing-price">
+                            <span class="price-amount">€9</span>
+                            <span class="price-period" data-i18n="month">/месяц</span>
+                        </div>
+                        <p class="pricing-description" data-i18n="plan_starter_desc">Для начинающих</p>
+                    </div>
+                    <ul class="pricing-features">
+                        <li data-i18n="pf_evaluations_30"><span class="check">✓</span> 30 оценок в месяц</li>
+                        <li data-i18n="pf_german_desc"><span class="check">✓</span> Описание на немецком</li>
+                        <li data-i18n="pf_price_range"><span class="check">✓</span> Точная цена и теги</li>
+                        <li data-i18n="pf_willhaben_listing"><span class="check">✓</span> Готовое объявление</li>
+                        <li class="disabled" data-i18n="pf_bulk"><span class="cross">×</span> Bulk-загрузка</li>
+                    </ul>
+                    <a href="app.html" class="btn btn-secondary btn-full" data-i18n="btn_choose_starter">Выбрать
+                        Starter</a>
+                </div>
+                <div class="pricing-card popular">
+                    <div class="popular-badge" data-i18n="badge_monthly">Месяц</div>
+                    <div class="pricing-header">
+                        <h3 class="pricing-name" data-i18n="plan_pro_monthly">Pro Monthly</h3>
+                        <div class="pricing-price">
+                            <span class="price-amount">€99</span>
+                            <span class="price-period" data-i18n="month">/месяц</span>
+                        </div>
+                        <p class="pricing-description" data-i18n="plan_pro_desc">Для активных продавцов</p>
+                    </div>
+                    <ul class="pricing-features">
+                        <li data-i18n="pf_unlimited"><span class="check">✓</span> Безлимитные оценки</li>
+                        <li data-i18n="pf_seo_german"><span class="check">✓</span> SEO-описания на немецком</li>
+                        <li data-i18n="pf_willhaben_listing"><span class="check">✓</span> Готовое объявление для
+                            willhaben</li>
+                        <li data-i18n="pf_bulk"><span class="check">✓</span> Bulk-загрузка (50 фото)</li>
+                        <li data-i18n="pf_history_csv"><span class="check">✓</span> История + экспорт CSV</li>
+                    </ul>
+                    <a href="app.html" class="btn btn-primary btn-full" data-i18n="btn_choose_pro">Выбрать Pro</a>
+                </div>
+                <div class="pricing-card yearly">
+                    <div class="popular-badge discount" data-i18n="badge_discount">-43% Скидка</div>
+                    <div class="pricing-header">
+                        <h3 class="pricing-name" data-i18n="plan_pro_yearly">Pro Yearly</h3>
+                        <div class="pricing-price">
+                            <span class="price-amount">€679</span>
+                            <span class="price-period" data-i18n="year">/год</span>
+                        </div>
+                        <p class="pricing-description" data-i18n="plan_yearly_desc">~€56/мес • Лучшая цена</p>
+                    </div>
+                    <ul class="pricing-features">
+                        <li data-i18n="pf_all_pro"><span class="check">✓</span> Всё из Pro Monthly</li>
+                        <li data-i18n="pf_2_months_free"><span class="check">✓</span> 2 месяца бесплатно</li>
+                        <li data-i18n="pf_priority_support"><span class="check">✓</span> Приоритетная поддержка</li>
+                        <li data-i18n="pf_early_access"><span class="check">✓</span> Ранний доступ к фичам</li>
+                        <li data-i18n="pf_future_integrations"><span class="check">✓</span> Будущие интеграции (eBay)
+                        </li>
+                    </ul>
+                    <a href="app.html" class="btn btn-primary btn-full" data-i18n="btn_choose_yearly">Выбрать Yearly</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <a href="/" class="logo">
+                        <span class="logo-icon"><span>W</span></span>
+                        <span class="logo-text">Willnicht</span>
+                    </a>
+                    <p class="footer-tagline" data-i18n="footer_tagline">AI-оценка товаров для маркетплейсов</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4 data-i18n="footer_product">Продукт</h4>
+                        <a href="#features" data-i18n="nav_features">Возможности</a>
+                        <a href="#pricing" data-i18n="nav_pricing">Тарифы</a>
+                        <a href="#how-it-works" data-i18n="nav_how_it_works">Как работает</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4 data-i18n="footer_company">Компания</h4>
+                        <a href="#" data-i18n="footer_about">О нас</a>
+                        <a href="#" data-i18n="footer_blog">Блог</a>
+                        <a href="#" data-i18n="footer_contact">Контакты</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4 data-i18n="footer_support">Поддержка</h4>
+                        <a href="#" data-i18n="footer_faq">FAQ</a>
+                        <a href="#" data-i18n="footer_api">API документация</a>
+                        <a href="#" data-i18n="footer_status">Статус системы</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p data-i18n="footer_rights">&copy; 2026 Willnicht. Все права защищены.</p>
+                <div class="footer-legal">
+                    <a href="#" data-i18n="footer_privacy">Политика конфиденциальности</a>
+                    <a href="#" data-i18n="footer_terms">Условия использования</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="i18n.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
