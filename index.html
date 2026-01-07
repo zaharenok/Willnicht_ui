@@ -28,7 +28,7 @@
                 <a href="#pricing" class="nav-link" data-i18n="nav_pricing">Тарифы</a>
             </nav>
             <div class="header-actions">
-                <button class="btn btn-primary nav-btn-cta" id="startFreeBtn" data-i18n="btn_start_free">Начать бесплатно</button>
+                <a href="app.html" class="btn btn-primary nav-btn-cta" data-i18n="btn_start_free">Начать бесплатно</a>
 
                 <div class="lang-selector">
                     <button class="lang-selector-title">
@@ -58,7 +58,7 @@
             <a href="#features" class="mobile-nav-link">Возможности</a>
             <a href="#how-it-works" class="mobile-nav-link">Как это работает</a>
             <a href="#pricing" class="mobile-nav-link" data-i18n="nav_pricing">Тарифы</a>
-            <button class="btn btn-primary btn-full mobile-start-free-btn" data-i18n="btn_start_free">Начать бесплатно</button>
+            <a href="app.html" class="btn btn-primary btn-full" data-i18n="btn_start_free">Начать бесплатно</a>
             <div class="mobile-lang">
                 <button class="lang-dropdown-item" data-lang="ru">Русский</button>
                 <button class="lang-dropdown-item" data-lang="en">English</button>
@@ -84,12 +84,12 @@
                     публикацию на willhaben.at. Идеально для экспатов.
                 </p>
                 <div class="hero-actions">
-                    <button class="btn btn-primary btn-large hero-start-btn">
+                    <a href="app.html" class="btn btn-primary btn-large">
                         <span data-i18n="hero_btn_upload">Загрузить фото</span>
                         <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M5 12h14M12 5l7 7-7 7" />
                         </svg>
-                    </button>
+                    </a>
                     <a href="#how-it-works" class="btn btn-secondary btn-large" data-i18n="hero_btn_learn">Узнать
                         больше</a>
                 </div>
@@ -441,76 +441,8 @@
         </div>
     </footer>
 
-    <!-- Auth Modal -->
-    <div class="auth-modal" id="authModal" hidden>
-        <div class="auth-modal-backdrop" id="authModalBackdrop"></div>
-        <div class="auth-modal-content">
-            <button class="auth-modal-close" id="authModalClose" aria-label="Закрыть">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-            </button>
-
-            <!-- Register Form -->
-            <div class="auth-form" id="registerFormModal">
-                <h2 class="auth-title" data-i18n="register_title">Регистрация</h2>
-                <p class="auth-subtitle" data-i18n="register_subtitle">Создайте аккаунт для доступа к сервису</p>
-
-                <form id="registerForm">
-                    <div class="form-group">
-                        <label class="form-label" for="registerEmail">Email</label>
-                        <input type="email" id="registerEmail" class="form-input" placeholder="name@example.com" required autocomplete="email">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="registerPassword">Пароль</label>
-                        <input type="password" id="registerPassword" class="form-input" placeholder="Минимум 6 символов" required autocomplete="new-password" minlength="6">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="registerPasswordConfirm">Подтвердите пароль</label>
-                        <input type="password" id="registerPasswordConfirm" class="form-input" placeholder="••••••••" required autocomplete="new-password" minlength="6">
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-full btn-large">
-                        <span data-i18n="btn_register">Зарегистрироваться</span>
-                    </button>
-                    <p class="auth-switch-hint">
-                        <span data-i18n="login_has_account">Уже есть аккаунт?</span>
-                        <a href="#" id="showLoginFormFromRegister" data-i18n="btn_enter">Войти</a>
-                    </p>
-                </form>
-            </div>
-
-            <!-- Login Form -->
-            <div class="auth-form" id="loginFormModal" hidden>
-                <h2 class="auth-title" data-i18n="login_title">Вход</h2>
-                <p class="auth-subtitle" data-i18n="login_subtitle">Введите email и пароль для доступа к сервису</p>
-
-                <form id="loginForm">
-                    <div class="form-group">
-                        <label class="form-label" for="loginEmail">Email</label>
-                        <input type="email" id="loginEmail" class="form-input" placeholder="name@example.com" required autocomplete="email">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="loginPassword">Пароль</label>
-                        <input type="password" id="loginPassword" class="form-input" placeholder="••••••••" required autocomplete="current-password" minlength="6">
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-full btn-large">
-                        <span data-i18n="btn_enter">Войти</span>
-                    </button>
-                    <p class="auth-switch-hint">
-                        <span data-i18n="login_no_account">Нет аккаунта?</span>
-                        <a href="#" id="showRegisterFormFromLogin" data-i18n="btn_register">Зарегистрироваться</a>
-                    </p>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Supabase Client Library -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="i18n.js"></script>
-    <script src="supabase/client.js"></script>
-    <script src="index-auth.js"></script>
+    <script src="app.js"></script>
 </body>
 
 </html>

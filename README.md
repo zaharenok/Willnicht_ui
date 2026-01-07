@@ -1,21 +1,11 @@
 # Willnicht — AI Product Evaluation for Marketplaces
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
+[![CSS3](https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS)
+
 **Willnicht** is a SaaS platform that helps expats and foreigners sell products on local marketplaces (willhaben.at, eBay Kleinanzeigen, etc.) by overcoming language barriers through AI-powered product evaluation.
-
-## 🗄️ Supabase Integration
-
-This application now supports **Supabase** for secure user authentication and cloud data storage. Users can sign up with email/password, and their product evaluations are securely stored with Row Level Security (RLS) ensuring data isolation between users.
-
-**Key Features:**
-- ✅ Secure email/password authentication with session management
-- ✅ User registration with email confirmation
-- ✅ Persistent cloud storage for product evaluations
-- ✅ Row Level Security (RLS) for data isolation
-- ✅ Monthly evaluation limits per subscription plan
-- ✅ Graceful fallback to localStorage if Supabase is not configured
-
-**Setup Guide:** See [`SUPABASE_SETUP.md`](SUPABASE_SETUP.md) for detailed instructions on setting up Supabase.
-
 
 ## 🎯 Mission
 
@@ -108,8 +98,8 @@ The application sends data to a Make.com webhook endpoint for AI processing:
 
 ```javascript
 const CONFIG = {
-    webhookUrl: 'YOUR_WEBHOOK_URL_HERE',
-    userEmail: 'user@example.com',
+    webhookUrl: 'https://hook.eu1.make.com/9kor8vv2jkg97h95vs561rg10wxm99g3',
+    userEmail: 'olegzakharchenko@gmail.com',
     maxFiles: 10,
     maxFileSize: 10 * 1024 * 1024, // 10MB
     allowedTypes: ['image/jpeg', 'image/png', 'image/webp']
@@ -150,13 +140,21 @@ For multiple images, return an array of objects.
 
 ```
 Willnicht_ui/
- ├── index.html              # Landing page
- ├── app.html                # Main application
- ├── app.js                  # Application logic
- ├── i18n.js                 # Internationalization
- ├── styles.css              # Styling
- ├── README.md               # This file
- └── .gitignore              # Git ignore rules
+├── index.html              # Landing page
+├── app.html                # Main application
+├── app.js                  # Application logic
+├── i18n.js                 # Internationalization
+├── styles.css              # Styling
+├── README.md               # This file
+├── business_logic.md       # Business model documentation
+├── site_logic.md           # Site logic and user journey
+├── WEBHOOK_API.md          # Webhook API documentation
+├── COOKIES_IMPORT_GUIDE.md # Cookie import guide for testing
+├── test_app.html           # Test page
+├── test_app.js             # Test scripts
+├── debug_webhook.py        # Webhook debugging script
+├── import_cookies_to_chrome.py # Cookie import automation
+└── .gitignore              # Git ignore rules
 ```
 
 ## 🎨 Design System
@@ -188,6 +186,35 @@ Based on [solt.ws](https://www.solt.ws/) design principles:
 | **Pro Monthly** | €99/month | Unlimited | Bulk upload (50 photos), export CSV, SEO descriptions |
 | **Pro Yearly** | €679/year | Unlimited | All Pro features + 2 months free, priority support |
 
+## 🧪 Testing
+
+### Test with Mock Data
+
+The application includes a demo mode that generates mock results if the webhook is unavailable.
+
+### Webhook Testing
+
+Use the provided Python script to test the webhook:
+
+```bash
+python3 debug_webhook.py
+```
+
+### Cookie Import for willhaben.at Testing
+
+For testing the willhaben.at integration:
+
+```bash
+# Option 1: Use the Python script
+python3 import_cookies_to_chrome.py
+
+# Option 2: Use EditThisCookie extension
+# 1. Install EditThisCookie from Chrome Web Store
+# 2. Open willhaben.at
+# 3. Import oleg.willhaben.at_cookies.json
+```
+
+⚠️ **Important**: Never commit cookie files to GitHub!
 
 ## 🔒 Security
 
@@ -204,6 +231,10 @@ The application supports three languages:
 - **German** (DE)
 
 Language can be switched from the header dropdown.
+
+## 📝 API Documentation
+
+For detailed webhook API documentation, see [`WEBHOOK_API.md`](WEBHOOK_API.md:1).
 
 ## 🤝 Contributing
 
@@ -222,6 +253,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 📧 Contact
 
 - **GitHub**: https://github.com/zaharenok
+- **Email**: olegzakharchenko@gmail.com
 - **Issues**: https://github.com/zaharenok/Willnicht_ui/issues
 
 ## 🙏 Acknowledgments

@@ -51,26 +51,6 @@
             </a>
 
             <div class="header-actions">
-                <div id="userMenu" hidden>
-                    <div class="user-info-horizontal">
-                        <div class="evaluations-progress-compact" id="evaluationsProgress" title="Использовано оценок за текущий месяц">
-                            <progress id="evaluationsProgressBar" value="0" max="3"></progress>
-                            <span class="evaluations-text-compact">
-                                <span id="evaluationsUsed">0</span>/<span id="evaluationsLimit">3</span>
-                            </span>
-                        </div>
-                        <span id="userEmailDisplay">user@example.com</span>
-                        <button class="btn btn-ghost btn-logout" id="logoutBtn" aria-label="Выйти">
-                            <svg class="btn-icon" role="img" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <title>Выйти</title>
-                                <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
-                                <polyline points="16 17 21 12 16 7" />
-                                <line x1="21" y1="12" x2="9" y2="12" />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-
                 <div class="lang-selector" id="langSelector">
                     <button class="lang-selector-title" aria-haspopup="true" aria-expanded="false" aria-label="Выберите язык интерфейса">
                         <span id="activeLangLabel">RU</span>
@@ -84,9 +64,41 @@
                         <button class="lang-dropdown-item" data-lang="de" role="menuitem">Deutsch</button>
                     </div>
                 </div>
+
+                <div id="userMenu" hidden>
+                    <button class="btn btn-ghost" id="logoutBtn">
+                        <span id="userEmailDisplay">user@example.com</span>
+                        <svg class="btn-icon" role="img" aria-label="Выйти" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <title>Выйти</title>
+                            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
+                            <polyline points="16 17 21 12 16 7" />
+                            <line x1="21" y1="12" x2="9" y2="12" />
+                        </svg>
+                    </button>
+                </div>
             </div>
         </div>
     </header>
+
+    <!-- Login Section -->
+    <section class="login-section" id="loginSection">
+        <div class="container">
+            <div class="login-card">
+                <h2 class="login-title" data-i18n="login_title">Вход</h2>
+                <p class="login-subtitle" data-i18n="login_subtitle">Введите email для доступа к сервису</p>
+
+                <form class="login-form" id="loginForm">
+                    <div class="form-group">
+                        <label class="form-label" for="email">Email</label>
+                        <input type="email" id="email" class="form-input" placeholder="name@example.com" required autocomplete="email" aria-label="Email адрес">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full btn-large">
+                        <span data-i18n="btn_enter">Войти</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
 
     <!-- App Wrapper (Upload + Results) -->
     <div class="app-wrapper" id="appWrapper">
@@ -98,26 +110,9 @@
                 <p class="section-subtitle" data-i18n="upload_subtitle">3 бесплатных оценки каждый месяц</p>
             </div>
 
-            <!-- Progress Steps Indicator -->
-            <div class="progress-steps">
-                <div class="step-indicator active stagger-in" data-step="1">
-                    <div class="step-number">1</div>
-                    <div class="step-label" data-i18n="step_upload">Загрузка</div>
-                </div>
-                <div style="width: 24px; height: 2px; background: var(--color-border-light); border-radius: 2px;"></div>
-                <div class="step-indicator stagger-in" data-step="2">
-                    <div class="step-number">2</div>
-                    <div class="step-label" data-i18n="step_settings">Настройки</div>
-                </div>
-                <div style="width: 24px; height: 2px; background: var(--color-border-light); border-radius: 2px;"></div>
-                <div class="step-indicator stagger-in" data-step="3">
-                    <div class="step-number">3</div>
-                    <div class="step-label" data-i18n="step_result">Результат</div>
-                </div>
-            </div>
-
-            <!-- Upload Section -->
-            <div class="app-column-left">
+            <div class="app-split-view">
+                <!-- Left Column: Upload -->
+                <div class="app-column-left">
                     <div class="upload-area" id="uploadArea">
                         <div class="upload-content">
                             <div class="upload-icon">
@@ -134,60 +129,43 @@
                         <div class="upload-preview" id="uploadPreview"></div>
                     </div>
 
-                    <button class="btn btn-primary btn-large btn-analyze" id="analyzeBtn" aria-live="polite" disabled style="margin-top: var(--spacing-lg);">
+                    <div class="form-group" style="margin-top: 20px;">
+                        <label class="form-label" for="additionalText" data-i18n="label_additional_text">Дополнительная информация</label>
+                        <textarea id="additionalText" class="form-textarea" rows="3" data-i18n-placeholder="placeholder_additional_text" placeholder="Бренд, размеры, состояние, дефекты..." aria-describedby="additionalTextHint"></textarea>
+                        <small id="additionalTextHint" class="form-hint" style="display: block; margin-top: 4px; font-size: 0.75rem; color: var(--color-text-muted);">
+                            Укажите детали для точной AI оценки (бренд, размеры, состояние)
+                        </small>
+                    </div>
+
+                    <button class="btn btn-primary btn-large btn-analyze" id="analyzeBtn" aria-live="polite" disabled>
                         <span class="btn-text" data-i18n="btn_analyze">Получить оценку</span>
                         <span class="btn-loader"></span>
                     </button>
-            </div>
+                </div>
 
-            <!-- Settings Section -->
-            <div class="app-column-right">
-                    <div class="settings-accordion">
-                        <button class="accordion-header" id="settingsAccordionHeader" aria-expanded="true" aria-controls="settingsAccordionContent">
-                            <div class="accordion-header-content">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="12" cy="12" r="3"></circle>
-                                    <path d="M12 1v6m0 6v6m9-9h-6m-6 0H3"></path>
-                                </svg>
-                                <h3 class="panel-title" style="margin: 0; border: none; padding: 0;" data-i18n="settings_title">Настройки</h3>
+                <!-- Right Column: Settings + Latest Result -->
+                <div class="app-column-right">
+                    <div class="settings-panel">
+                        <h3 class="panel-title" data-i18n="settings_title">Настройки</h3>
+                        <div class="settings-grid">
+                            <div class="setting-group">
+                                <label for="userLangSelect" data-i18n="label_your_lang">Ваш язык</label>
+                                <select id="userLangSelect" class="form-select">
+                                    <option value="Russian">Русский</option>
+                                    <option value="English">English</option>
+                                    <option value="German">Deutsch</option>
+                                    <option value="Serbian">Српски</option>
+                                </select>
                             </div>
-                            <svg class="accordion-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="6 9 12 15 18 9"></polyline>
-                            </svg>
-                        </button>
-                        <div class="accordion-content" id="settingsAccordionContent" aria-hidden="false">
-                            <div class="accordion-body">
-                                <div class="settings-grid">
-                                    <div class="setting-group">
-                                        <label for="userLangSelect" data-i18n="label_your_lang">Ваш язык</label>
-                                        <select id="userLangSelect" class="form-select">
-                                            <option value="Russian">Русский</option>
-                                            <option value="English">English</option>
-                                            <option value="German">Deutsch</option>
-                                            <option value="Serbian">Српски</option>
-                                        </select>
-                                    </div>
-                                    <div class="setting-group">
-                                        <label for="marketplaceLangSelect" data-i18n="label_marketplace_lang">Язык
-                                            площадки</label>
-                                        <select id="marketplaceLangSelect" class="form-select">
-                                            <option value="German" selected>Deutsch (willhaben)</option>
-                                            <option value="English">English</option>
-                                            <option value="Russian">Русский</option>
-                                        </select>
-                                    </div>
-                                </div>
+                            <div class="setting-group">
+                                <label for="marketplaceLangSelect" data-i18n="label_marketplace_lang">Язык
+                                    площадки</label>
+                                <select id="marketplaceLangSelect" class="form-select">
+                                    <option value="German" selected>Deutsch (willhaben)</option>
+                                    <option value="English">English</option>
+                                    <option value="Russian">Русский</option>
+                                </select>
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="additional-info-panel">
-                        <h3 class="panel-title" data-i18n="label_additional_text">Дополнительная информация</h3>
-                        <div class="form-group" style="flex: 1; display: flex; flex-direction: column;">
-                            <textarea id="additionalText" class="form-textarea" style="flex: 1;" data-i18n-placeholder="placeholder_additional_text" placeholder="Бренд, размеры, состояние, дефекты..." aria-describedby="additionalTextHint"></textarea>
-                            <small id="additionalTextHint" class="form-hint" style="margin-top: var(--spacing-sm);">
-                                Укажите детали для точной AI оценки (бренд, размеры, состояние)
-                            </small>
                         </div>
                     </div>
 
@@ -199,36 +177,9 @@
                         <h3 class="panel-title" data-i18n="latest_result_title">Результат</h3>
                         <div id="latestResultContent"></div>
                     </div>
-
-                    <!-- Empty State -->
-                    <div id="emptyStateContainer" class="empty-state" role="region" aria-label="Пример результата">
-                        <div class="empty-state-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
-                                <polyline points="17 8 12 3 7 8" />
-                                <line x1="12" y1="3" x2="12" y2="15" />
-                            </svg>
-                        </div>
-                        <h3 class="empty-state-title" data-i18n="empty_state_title">Загрузите первое фото</h3>
-                        <p class="empty-state-description" data-i18n="empty_state_description">
-                            Получите готовое объявление на немецком с рыночной ценой за секунды
-                        </p>
-                        <div class="example-card" style="display: none;">
-                            <span class="example-badge">Пример результата</span>
-                            <h4 style="font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--color-text);">
-                                IKEA Sofa - 3-Sitzer
-                            </h4>
-                            <p style="font-size: 13px; color: var(--color-text-secondary); margin-bottom: 12px; line-height: 1.5;">
-                                Gute Zustahl, nur minimale Gebrauchsspuren. Bezugsstoff: Baumwolle/Polyester. Maße: 200x90x85 cm. Abholung in 1020 Wien.
-                            </p>
-                            <div style="display: flex; gap: 16px; font-size: 14px; font-weight: 600;">
-                                <span style="color: var(--color-text-muted);">€150-200</span>
-                                <span style="color: var(--color-accent);">€180</span>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
+        </div>
 
         <!-- History Results Section -->
         <section class="results-section" id="results">
@@ -264,44 +215,8 @@
     </main>
     </div>
 
-    <!-- Supabase Client Library -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="i18n.js"></script>
-    <script src="supabase/client.js"></script>
     <script src="app.js"></script>
-
-    <!-- Modern UI Enhancements Script -->
-    <script>
-        // Accordion functionality
-        document.addEventListener('DOMContentLoaded', () => {
-            const accordionHeader = document.getElementById('settingsAccordionHeader');
-            const accordionContent = document.getElementById('settingsAccordionContent');
-
-            if (accordionHeader && accordionContent) {
-                accordionHeader.addEventListener('click', () => {
-                    const isExpanded = accordionHeader.getAttribute('aria-expanded') === 'true';
-
-                    // Toggle expanded state
-                    accordionHeader.setAttribute('aria-expanded', !isExpanded);
-                    accordionContent.setAttribute('aria-hidden', isExpanded);
-                });
-            }
-
-            // Show empty state initially
-            const emptyStateContainer = document.getElementById('emptyStateContainer');
-            const latestResultContainer = document.getElementById('latestResultContainer');
-
-            // Empty state is visible by default when no results
-            if (emptyStateContainer && latestResultContainer) {
-                // Check if there are any results
-                const hasResults = document.querySelector('.result-card');
-
-                if (!hasResults) {
-                    emptyStateContainer.hidden = false;
-                }
-            }
-        });
-    </script>
 </body>
 
 </html>

@@ -31,31 +31,6 @@ wheels/
 .installed.cfg
 *.egg
 
-# Test and debug files
-test_*.html
-test_*.py
-test_*.js
-debug_*.py
-*_test.py
-
-# Internal documentation (not for public repo)
-CLAUDE.md
-business_logic.md
-site_logic.md
-info.md
-COOKIES_IMPORT_GUIDE.md
-WEBHOOK_API.md
-
-# Development scripts
-import_cookies_to_chrome.py
-debug_webhook.py
-
-# Test images
-IMG_*.JPG
-IMG_*.jpg
-IMG_*.PNG
-IMG_*.png
-
 # IDE
 .vscode/
 .idea/

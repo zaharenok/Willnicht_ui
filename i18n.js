@@ -158,42 +158,7 @@ const TRANSLATIONS = {
         label_additional_text: 'Дополнительная информация',
         placeholder_additional_text: 'Например: "Это винтажная вещь, учти дефекты..."',
         show_more: 'Показать еще',
-        show_less: 'Свернуть',
-
-        // Modern UI Steps
-        step_upload: 'Загрузка',
-        step_settings: 'Настройки',
-        step_result: 'Результат',
-
-        // Empty State
-        empty_state_title: 'Загрузите первое фото',
-        empty_state_description: 'Получите готовое объявление на немецком с рыночной ценой за секунды',
-
-        // Authentication
-        login_title: 'Вход',
-        login_subtitle: 'Введите email и пароль для доступа к сервису',
-        register_title: 'Регистрация',
-        register_subtitle: 'Создайте аккаунт для доступа к сервису',
-        btn_enter: 'Войти',
-        btn_register: 'Зарегистрироваться',
-        login_no_account: 'Нет аккаунта?',
-        login_has_account: 'Уже есть аккаунт?',
-        notify_logging_in: 'Вход...',
-        notify_login_success: 'Вход выполнен успешно',
-        notify_login_error: 'Ошибка входа',
-        notify_invalid_credentials: 'Неверный email или пароль',
-        notify_email_not_confirmed: 'Email не подтвержден',
-        notify_registering: 'Регистрация...',
-        notify_register_success: 'Регистрация успешна! Проверьте email для подтверждения',
-        notify_register_error: 'Ошибка регистрации',
-        notify_user_exists: 'Пользователь с таким email уже существует',
-        notify_passwords_dont_match: 'Пароли не совпадают',
-        notify_logout_success: 'Вы вышли из системы',
-        notify_logout_error: 'Ошибка выхода',
-        notify_limit_reached: 'Достигнут лимит оценок за месяц',
-        notify_deleted: 'Оценка удалена',
-        notify_fill_all_fields: 'Заполните все поля',
-        notify_password_too_short: 'Пароль должен быть минимум 6 символов',
+        show_less: 'Свернуть'
     },
 
     en: {
@@ -350,40 +315,7 @@ const TRANSLATIONS = {
         label_additional_text: 'Additional Information',
         placeholder_additional_text: 'E.g., "This is vintage, consider defects..."',
         show_more: 'Show more',
-        show_less: 'Show less',
-
-        // Modern UI Steps
-        step_upload: 'Upload',
-        step_settings: 'Settings',
-        step_result: 'Result',
-
-        // Empty State
-        empty_state_title: 'Upload your first photo',
-        empty_state_description: 'Get a ready-to-use German listing with market price in seconds',
-
-        // Authentication
-        login_title: 'Login',
-        login_subtitle: 'Enter email and password to access the service',
-        register_title: 'Register',
-        register_subtitle: 'Create an account to access the service',
-        btn_enter: 'Login',
-        btn_register: 'Register',
-        login_no_account: "Don't have an account?",
-        login_has_account: 'Already have an account?',
-        notify_logging_in: 'Logging in...',
-        notify_login_success: 'Login successful',
-        notify_login_error: 'Login error',
-        notify_invalid_credentials: 'Invalid email or password',
-        notify_email_not_confirmed: 'Email not confirmed',
-        notify_registering: 'Registering...',
-        notify_register_success: 'Registration successful! Check your email for confirmation',
-        notify_register_error: 'Registration error',
-        notify_user_exists: 'User with this email already exists',
-        notify_passwords_dont_match: 'Passwords do not match',
-        notify_logout_success: 'Logged out successfully',
-        notify_logout_error: 'Logout error',
-        notify_limit_reached: 'Monthly evaluation limit reached',
-        notify_deleted: 'Evaluation deleted',
+        show_less: 'Show less'
     },
 
     de: {
@@ -540,40 +472,7 @@ const TRANSLATIONS = {
         label_additional_text: 'Zusatzinformation',
         placeholder_additional_text: 'Z.B. "Vintage-Artikel, bitte Mängel beachten..."',
         show_more: 'Mehr anzeigen',
-        show_less: 'Weniger anzeigen',
-
-        // Modern UI Steps
-        step_upload: 'Upload',
-        step_settings: 'Einstellungen',
-        step_result: 'Ergebnis',
-
-        // Empty State
-        empty_state_title: 'Laden Sie Ihr erstes Foto hoch',
-        empty_state_description: 'Erhalten Sie in Sekunden eine fertige deutsche Anzeige mit Marktpreis',
-
-        // Authentication
-        login_title: 'Anmelden',
-        login_subtitle: 'Geben Sie Email und Passwort ein, um auf den Service zuzugreifen',
-        register_title: 'Registrieren',
-        register_subtitle: 'Erstellen Sie ein Konto, um auf den Service zuzugreifen',
-        btn_enter: 'Anmelden',
-        btn_register: 'Registrieren',
-        login_no_account: 'Kein Konto?',
-        login_has_account: 'Haben Sie bereits ein Konto?',
-        notify_logging_in: 'Anmelden...',
-        notify_login_success: 'Anmeldung erfolgreich',
-        notify_login_error: 'Anmeldefehler',
-        notify_invalid_credentials: 'Ungültige Email oder Passwort',
-        notify_email_not_confirmed: 'Email nicht bestätigt',
-        notify_registering: 'Registrierung...',
-        notify_register_success: 'Registrierung erfolgreich! Überprüfen Sie Ihre Email für Bestätigung',
-        notify_register_error: 'Registrierungsfehler',
-        notify_user_exists: 'Benutzer mit dieser Email existiert bereits',
-        notify_passwords_dont_match: 'Passwörter stimmen nicht überein',
-        notify_logout_success: 'Erfolgreich abgemeldet',
-        notify_logout_error: 'Abmeldefehler',
-        notify_limit_reached: 'Monatliches Bewertungslimit erreicht',
-        notify_deleted: 'Bewertung gelöscht',
+        show_less: 'Weniger anzeigen'
     }
 };
 
